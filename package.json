@@ -4,12 +4,14 @@
   "private": true,
   "proxy": "http://localhost:3002",
   "dependencies": {
+    "@ant-design/icons": "^5.0.1",
     "@babel/core": "^7.16.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
     "@svgr/webpack": "^5.5.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "antd": "^5.1.6",
     "babel-jest": "^27.4.2",
     "babel-loader": "^8.2.3",
     "babel-plugin-named-asset-import": "^0.3.8",
@@ -96,7 +98,7 @@
       "react-app-polyfill/jsdom"
     ],
     "setupFilesAfterEnv": [
-      "<rootDir>/src/setupTests.js"
+      "<rootDir>/src/client/setupTests.js"
     ],
     "testMatch": [
       "<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",

@@ -1,0 +1,38 @@
+.header {
+  position: 'sticky';
+  display: flex;
+  flex-direction: row;
+}
+
+.headerText1 {
+  color: white;
+  font-size: 28px;
+  font-weight: bold;
+}
+.headerText2 {
+  color: white;
+  font-size: 15px;
+  font-weight: bold;
+  padding-top: 5px;
+  padding-left: 3px;
+  flex-grow: 1;
+}
+
+.headerInput {
+  width: 40%;
+  flex-grow: 0;
+  padding-right: 10px;
+  margin-right: 170px;
+  margin-top: 13px;
+}
+
+.headerSignIn {
+  color: white;
+  font-weight: bold;
+  flex-grow: 1;
+}
+
+.headerCart {
+  color: white;
+  font-weight: bold;
+}
