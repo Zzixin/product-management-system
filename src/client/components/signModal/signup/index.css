@@ -1,0 +1,10 @@
+.signUpBtn {
+  width: 100%;
+}
+
+.signUp-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 22px;
+  margin-bottom: 30px;
+}

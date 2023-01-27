@@ -1,38 +1,31 @@
-import React, { useState } from 'react';
-import { Button, Modal } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Modal } from 'antd';
+import { signInModal } from '../../actions/index.js';
+import { useDispatch } from 'react-redux';
+import './index.css';
+import { useSelector } from 'react-redux';
 
-const MyModal = () => {
-  const [modal1Open, setModal1Open] = useState(false);
-  const [modal2Open, setModal2Open] = useState(false);
+const MyModal = ({ title, show, children }) => {
+  const [isVisible, setIsVisible] = useState(show);
+  const type = useSelector((state) => state);
+
+  useEffect(() => {
+    setIsVisible(true);
+  }, [type]);
 
   return (
     <>
       <Modal
-        title='20px to Top'
-        style={{ top: 20 }}
-        open={modal1Open}
-        onOk={() => setModal1Open(false)}
-        onCancel={() => setModal1Open(false)}
-      >
-        <p>some contents...</p>
-        <p>some contents...</p>
-        <p>some contents...</p>
-      </Modal>
-      <br />
-      <br />
-      <Button type='primary' onClick={() => setModal2Open(true)}>
-        Vertically centered modal dialog
-      </Button>
-      <Modal
-        title='Vertically centered modal dialog'
+        title={<div className='modal-title'>{title}</div>}
         centered
-        open={modal2Open}
-        onOk={() => setModal2Open(false)}
-        onCancel={() => setModal2Open(false)}
+        open={isVisible}
+        onCancel={() => {
+          setIsVisible(false);
+        }}
+        footer={null}
+        width={450}
       >
-        <p>some contents...</p>
-        <p>some contents...</p>
-        <p>some contents...</p>
+        {children}
       </Modal>
     </>
   );

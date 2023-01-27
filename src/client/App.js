@@ -2,14 +2,15 @@ import './App.css';
 
 import MyHeader from './common/header/index.js';
 import MyFooter from './common/footer/index.js';
-import MyModal from './common/modal/index.js';
+import Home from './components/home/home';
 import './index.css';
+import { useState } from 'react';
 
 function App() {
   return (
     <>
       <MyHeader />
-      <MyModal />
+      <Home />
       <MyFooter />
     </>
   );
