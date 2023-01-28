@@ -1,3 +1,4 @@
-import { createStore } from 'redux';
-import { optionReducer } from '../reducers/index.js';
-export const store = createStore(optionReducer);
+import { createStore, applyMiddleware } from 'redux';
+import allReducers from '../reducers/index.js';
+import thunk from 'redux-thunk';
+export const store = createStore(allReducers, applyMiddleware(thunk));

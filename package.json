@@ -2,7 +2,7 @@
   "name": "product-management-system",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:3002",
+  "proxy": "http://localhost:3002/",
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
     "@babel/core": "^7.16.0",

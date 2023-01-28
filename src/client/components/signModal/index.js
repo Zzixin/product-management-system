@@ -3,7 +3,7 @@ import SignIn from './signin/index.js';
 import SignUp from './signup/index.js';
 import ForgetPassword from './forgetPassword';
 
-const SignModal = ({ show, type }) => {
+const SignModal = ({ show, type, email = '' }) => {
   const handleTitle = () => {
     switch (type) {
       case 1:
@@ -22,7 +22,7 @@ const SignModal = ({ show, type }) => {
       case 2:
         return <SignUp />;
       case 3:
-        return <ForgetPassword />;
+        return <ForgetPassword email={email} />;
     }
   };
 

@@ -2,6 +2,7 @@ import { Button, Form, Input } from 'antd';
 import { useState } from 'react';
 import { signInModal } from '../../../actions/index.js';
 import { useDispatch } from 'react-redux';
+import { signUpData } from '../../../actions/index.js';
 import './index.css';
 
 const SignUp = () => {
@@ -12,6 +13,10 @@ const SignUp = () => {
   const handleSubmit = () => {
     console.log('email:', email);
     console.log('password:', password);
+    signUpData(dispatch)({
+      email: email,
+      password: password,
+    });
   };
 
   const handleSignIn = () => {
@@ -47,6 +52,13 @@ const SignUp = () => {
             {
               required: true,
               message: 'Please input your password!',
+            },
+            {
+              pattern: new RegExp(
+                '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$'
+              ),
+              message:
+                'Password must have at least 8 characters and contain at least one lowercase letter, uppercase letter, number, and special character',
             },
           ]}
           hasFeedback

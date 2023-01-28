@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { signUpModal } from '../../../actions/index.js';
 import { passwordModal } from '../../../actions/index.js';
+import { signInData } from '../../../actions/index.js';
+import { giveFeedback } from '../../../actions/index.js';
 import './index.css';
 
 const SignIn = ({}) => {
@@ -13,6 +15,11 @@ const SignIn = ({}) => {
   const handleSubmit = () => {
     console.log('email:', email);
     console.log('password:', password);
+    signInData(dispatch)({
+      email: email,
+      password: password,
+    });
+    giveFeedback(dispatch)(true);
   };
 
   const handleSignUp = () => {
@@ -20,7 +27,7 @@ const SignIn = ({}) => {
   };
 
   const handlePassword = () => {
-    passwordModal(dispatch)(true);
+    passwordModal(dispatch)(email);
   };
 
   return (
