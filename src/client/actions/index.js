@@ -4,10 +4,10 @@
 3. open forget password
 */
 import { ajaxConfigHelper } from '../helper/index';
-export const signInModal = (dispatch) => (isVisible) => {
+export const signInModal = (dispatch) => (count) => {
   dispatch({
     type: 'signInModal_visible',
-    payload: isVisible,
+    payload: count,
   });
 };
 

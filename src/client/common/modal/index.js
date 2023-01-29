@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Modal } from 'antd';
-import { signInModal } from '../../actions/index.js';
+import { giveFeedback } from '../../actions/index.js';
 import { useDispatch } from 'react-redux';
 import './index.css';
 import { useSelector } from 'react-redux';
 
 const MyModal = ({ title, show, children }) => {
   const [isVisible, setIsVisible] = useState(show);
-  const type = useSelector((state) => state);
+  const type = useSelector((state) => state.modalSwitch);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setIsVisible(true);
@@ -21,6 +22,7 @@ const MyModal = ({ title, show, children }) => {
         open={isVisible}
         onCancel={() => {
           setIsVisible(false);
+          giveFeedback(dispatch)(true);
         }}
         footer={null}
         width={450}

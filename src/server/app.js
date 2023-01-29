@@ -34,7 +34,7 @@ app.delete('/signIn', async (req, res) => {
   const password = req.body.password;
   const queryResult = await Data.findOne({ email: email });
   if (queryResult && queryResult.password === password) {
-    res.status('200').json({
+    res.status('201').json({
       message: 'Sign In Successfully',
     });
     return;
@@ -57,7 +57,7 @@ app.post('/signUp', async (req, res) => {
 
     const newData = await data.save();
     if (newData === data) {
-      res.status(201).json({
+      res.status(202).json({
         message: 'Sign Up Successfully',
         status: '201',
         newData: {
@@ -92,7 +92,7 @@ app.put('/changePass', async (req, res) => {
     });
 
     if (modifiedCount) {
-      res.status('200').json({
+      res.status('203').json({
         message: 'Change Password Successfully',
       });
       return;

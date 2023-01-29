@@ -6,9 +6,13 @@ import { signUpData } from '../../../actions/index.js';
 import './index.css';
 
 const SignUp = () => {
+  const dispatch = useDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const dispatch = useDispatch();
+  const [emailValidateType, setEmailValidateType] = useState('onBlur');
+  const [emailFeedbackState, setEmailFeedbackState] = useState(false);
+  const [passwordValidateType, setPasswordValidateType] = useState('onBlur');
+  const [passwordFeedbackState, setPasswordFeedbackState] = useState(false);
 
   const handleSubmit = () => {
     console.log('email:', email);
@@ -28,6 +32,7 @@ const SignUp = () => {
       <Form layout='vertical'>
         <Form.Item
           name='email'
+          validateTrigger={emailValidateType}
           label='Email'
           rules={[
             {
@@ -39,15 +44,22 @@ const SignUp = () => {
               message: 'Please input your E-mail!',
             },
           ]}
-          hasFeedback
+          hasFeedback={emailFeedbackState}
           value={email}
           onChange={(event) => setEmail(event.target.value)}
         >
-          <Input placeholder='you@example.com' type='email' />
+          <Input
+            placeholder='you@example.com'
+            onBlur={() => {
+              setEmailValidateType('onChange');
+              setEmailFeedbackState(true);
+            }}
+          />
         </Form.Item>
         <Form.Item
           name='password'
           label='Password'
+          validateTrigger={passwordValidateType}
           rules={[
             {
               required: true,
@@ -61,11 +73,16 @@ const SignUp = () => {
                 'Password must have at least 8 characters and contain at least one lowercase letter, uppercase letter, number, and special character',
             },
           ]}
-          hasFeedback
+          hasFeedback={passwordFeedbackState}
           value={password}
           onChange={(event) => setPassword(event.target.value)}
         >
-          <Input.Password />
+          <Input.Password
+            onBlur={() => {
+              setPasswordValidateType('onChange');
+              setPasswordFeedbackState(true);
+            }}
+          />
         </Form.Item>
         <Button type='primary' className='signUpBtn' onClick={handleSubmit}>
           Create account
