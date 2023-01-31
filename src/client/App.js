@@ -8,11 +8,11 @@ import { useState } from 'react';
 
 function App() {
   return (
-    <>
+    <div>
       <MyHeader />
       <Home />
       <MyFooter />
-    </>
+    </div>
   );
 }
 

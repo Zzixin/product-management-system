@@ -24,7 +24,7 @@ const SignUp = () => {
   };
 
   const handleSignIn = () => {
-    signInModal(dispatch)(true);
+    signInModal(dispatch)();
   };
 
   return (

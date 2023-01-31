@@ -3,44 +3,53 @@
 2. open sign up
 3. open forget password
 */
+import { signModal, status } from '../constants/index.js';
 import { ajaxConfigHelper } from '../helper/index';
-export const signInModal = (dispatch) => (count) => {
-  dispatch({
-    type: 'signInModal_visible',
-    payload: count,
-  });
-};
 
-export const signUpModal = (dispatch) => (isVisible) => {
-  dispatch({
-    type: 'signUpModal_visible',
-    payload: isVisible,
-  });
-};
+export const signOutClose =
+  (dispatch) =>
+  (choice = '') => {
+    dispatch({
+      type: status.signedOut,
+      payload: choice,
+    });
+  };
 
-export const passwordModal = (dispatch) => (email) => {
-  dispatch({
-    type: 'passwordModal_visible',
-    payload: email,
-  });
-};
+export const signInModal =
+  (dispatch) =>
+  (choice = '') => {
+    dispatch({
+      type: signModal.signIn,
+      payload: choice,
+    });
+  };
 
-export const giveFeedback = (dispatch) => (isVisible) => {
-  dispatch({
-    type: 'feedback',
-    payload: isVisible,
-  });
-};
+export const signUpModal =
+  (dispatch) =>
+  (choice = '') => {
+    dispatch({
+      type: signModal.signUp,
+      payload: choice,
+    });
+  };
+
+export const passwordModal =
+  (dispatch) =>
+  (email = '') => {
+    dispatch({
+      type: signModal.forgetPassword,
+      payload: email,
+    });
+  };
 
 export const signUpData = (dispatch) => async (data) => {
   try {
     const response = await fetch('/signUp', ajaxConfigHelper(data));
 
-    const { message, newData } = await response.json();
-    console.log('Success');
+    const result = await response.json();
     dispatch({
-      type: 'signUpUserData',
-      payload: newData,
+      type: status.signedUp,
+      payload: result.status,
     });
   } catch (error) {
     console.log(error);
@@ -49,13 +58,12 @@ export const signUpData = (dispatch) => async (data) => {
 
 export const signInData = (dispatch) => async (data) => {
   try {
-    const response = await fetch('/signIn', ajaxConfigHelper(data, 'DELETE'));
+    const response = await fetch('/signIn', ajaxConfigHelper(data));
     const result = await response.json();
     dispatch({
-      type: 'signInUserData',
-      payload: data,
+      type: status.signedIn,
+      payload: result.status,
     });
-    console.log(result);
   } catch (error) {
     console.log(error);
   }
@@ -65,12 +73,10 @@ export const modifyPassword = (dispatch) => async (data) => {
   try {
     const response = await fetch('/changePass', ajaxConfigHelper(data, 'PUT'));
     const result = await response.json();
-    console.log(result);
     dispatch({
-      type: 'modifyPassword',
-      payload: data,
+      type: status.changedPassword,
+      payload: result.status,
     });
-    console.log(result);
   } catch (error) {
     console.log(error);
   }

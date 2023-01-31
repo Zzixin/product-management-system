@@ -1,29 +1,44 @@
 import { combineReducers } from 'redux';
+import { signModal, status } from '../constants';
 
-export const optionReducer = (state = 0, { type, payload }) => {
+export const optionReducer = (state = status.signedOut, { type, payload }) => {
   // sign in, signup, forget
   switch (type) {
-    case 'signInModal_visible':
-      return 1;
-    case 'signUpModal_visible':
-      return 2;
-    case 'passwordModal_visible':
-      return payload;
-    case 'feedback':
-      return 0;
+    case signModal.signIn:
+      return signModal.signIn;
+    case signModal.signUp:
+      return signModal.signUp;
+    case signModal.forgetPassword:
+      return signModal.forgetPassword;
+    case status.signedOut:
+      return status.signedOut;
     default:
       return state;
   }
 };
 
-export const dataReducer = (state = {}, { type, payload }) => {
+export const productReducer = (state = status.signedOut, { type, payload }) => {
   switch (type) {
-    case 'signUpUserData':
-      return payload;
-    case 'modifyPassword':
-      return payload;
-    case 'signInUserData':
-      return payload;
+    case status.signedIn:
+      if (payload === 200) {
+        return status.signedIn;
+      } else {
+        return status.signedOut;
+      }
+    case status.signedUp:
+      if (payload === 200) {
+        return status.signedUp;
+      } else {
+        return status.signedOut;
+      }
+    case status.changedPassword:
+      if (payload === 200) {
+        return status.changedPassword;
+      } else {
+        return status.signedOut;
+      }
+    case status.signedOut:
+      return status.signedOut;
     default:
       return state;
   }
@@ -31,7 +46,7 @@ export const dataReducer = (state = {}, { type, payload }) => {
 
 const allReducers = combineReducers({
   modalSwitch: optionReducer,
-  dataSwitch: dataReducer,
+  productOption: productReducer,
 });
 
 export default allReducers;

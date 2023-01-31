@@ -1,21 +1,27 @@
 // LOG IN PAGE
-const LOGIN_FORM_FIELDS = {
-  PHONE: 'PHONE',
-  EMAIL: 'EMAIL',
-  VERFI_CODE: 'VERFICATION CODE',
-  REMEMBER_ME: 'REMEMBER ME',
+export const signModal = {
+  signIn: 'signIn',
+  signUp: 'signUp',
+  forgetPassword: 'forgetPassowrd',
 };
 
-const USER_TYPE = {
-  NANNY: 'NANNY',
-  CUSTOMER: 'CUSTOMER',
+export const status = {
+  signedIn: 'signedIn',
+  signedOut: 'signedOut',
+  signedUp: 'signedUp',
+  changedPassword: 'changedPassword',
 };
 
-const VERFI_CODE_STATUS = {
-  SEND: 'SEND',
-  FREEZE: 'FREEZE',
-  RESEND: 'RESEND',
+export const product = {
+  createProduct: 'createProduct',
+  detailProduct: 'detailProduct',
+  editProduct: 'editProduct',
+  addProduct: 'addProduct',
+  reduceProduct: 'reductProduct',
 };
 
-// HIRE FORM
-const JOB_TYPE = {};
+export const displayOption = {
+  lastAdd: 'Last added',
+  priceL2H: 'Price: low to high',
+  priceH2L: 'Price: high to low',
+};

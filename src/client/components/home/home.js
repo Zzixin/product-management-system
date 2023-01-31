@@ -1,17 +1,20 @@
 import { useSelector } from 'react-redux';
 import SignModal from '../signModal';
+import { signModal, status } from '../../constants';
+import ProductPage from '../product/index.js';
 
 const Home = () => {
-  const type = useSelector((state) => state.modalSwitch); // 1-signin, 2- signup, 3- password, 4- blank
-
-  if (type === 0) {
-    return <></>;
+  const type = useSelector((state) => state.modalSwitch);
+  const productChoice = useSelector((state) => state.productOption);
+  if (productChoice === status.signedIn) {
+    return <ProductPage />;
   } else {
-    if (type === 1 || type === 2) {
-      return <SignModal show={true} type={type} />;
+    if (type === status.signedOut) {
+      return <div>You have not signed in yet</div>;
+    } else if (type === signModal.forgetPassword) {
+      return <SignModal show={true} type={type} email={type} />;
     } else {
-      console.log(type);
-      return <SignModal show={true} type={3} email={type} />;
+      return <SignModal show={true} type={type} />;
     }
   }
 };

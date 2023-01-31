@@ -5,34 +5,51 @@
 }
 
 .headerText1 {
-  color: white;
   font-size: 28px;
   font-weight: bold;
 }
 .headerText2 {
-  color: white;
   font-size: 15px;
   font-weight: bold;
   padding-top: 5px;
   padding-left: 3px;
-  flex-grow: 1;
+}
+
+.headerLogo {
+  color: white;
+  flex-grow: 0.5;
 }
 
 .headerInput {
   width: 40%;
   flex-grow: 0;
   padding-right: 10px;
-  margin-right: 170px;
+  /* margin-right: 170px; */
   margin-top: 13px;
 }
 
 .headerSignIn {
   color: white;
   font-weight: bold;
-  flex-grow: 1;
+  margin-left: 400px;
 }
 
 .headerCart {
   color: white;
   font-weight: bold;
+  margin-left: 100px;
+}
+
+#amount {
+  margin-left: 10px;
+}
+
+a.headerLogo {
+  color: white;
+}
+a.headerSignIn {
+  color: white;
+}
+a.headerCart {
+  color: white;
 }

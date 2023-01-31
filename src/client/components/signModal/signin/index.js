@@ -4,12 +4,14 @@ import { useDispatch } from 'react-redux';
 import { signUpModal } from '../../../actions/index.js';
 import { passwordModal } from '../../../actions/index.js';
 import { signInData } from '../../../actions/index.js';
-import { giveFeedback } from '../../../actions/index.js';
 import './index.css';
 
 const SignIn = ({}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [emailValidateType, setEmailValidateType] = useState('onBlur');
+  const [emailFeedbackState, setEmailFeedbackState] = useState(false);
+
   const dispatch = useDispatch();
 
   const handleSubmit = () => {
@@ -19,11 +21,10 @@ const SignIn = ({}) => {
       email: email,
       password: password,
     });
-    giveFeedback(dispatch)(true);
   };
 
   const handleSignUp = () => {
-    signUpModal(dispatch)(true);
+    signUpModal(dispatch)();
   };
 
   const handlePassword = () => {
@@ -35,6 +36,7 @@ const SignIn = ({}) => {
       <Form layout='vertical'>
         <Form.Item
           name='email'
+          validateTrigger={emailValidateType}
           label='Email'
           rules={[
             {
@@ -46,11 +48,18 @@ const SignIn = ({}) => {
               message: 'Please input your E-mail!',
             },
           ]}
-          hasFeedback
+          hasFeedback={emailFeedbackState}
           value={email}
           onChange={(event) => setEmail(event.target.value)}
         >
-          <Input placeholder='you@example.com' type='email' />
+          <Input
+            placeholder='you@example.com'
+            type='email'
+            onBlur={() => {
+              setEmailValidateType('onChange');
+              setEmailFeedbackState(true);
+            }}
+          />
         </Form.Item>
         <Form.Item
           name='password'
@@ -61,7 +70,7 @@ const SignIn = ({}) => {
               message: 'Please input your password!',
             },
           ]}
-          hasFeedback
+          //hasFeedback
           value={password}
           onChange={(event) => setPassword(event.target.value)}
         >

@@ -28,22 +28,31 @@ app.use(express.static(path.join(__dirname, 'public')));
 // app.use('/', indexRouter);
 // app.use('/users', usersRouter);
 
-// 1. get
-app.delete('/signIn', async (req, res) => {
-  const email = req.body.email;
-  const password = req.body.password;
-  const queryResult = await Data.findOne({ email: email });
-  if (queryResult && queryResult.password === password) {
-    res.status('201').json({
-      message: 'Sign In Successfully',
+// 1. sign in find data
+app.post('/signIn', async (req, res) => {
+  if (req.body) {
+    const email = req.body.email;
+    const password = req.body.password;
+    const queryResult = await Data.findOne({ email: email });
+    if (queryResult && queryResult.password === password) {
+      res.status('200').json({
+        status: 200,
+        message: 'Sign In Successfully',
+      });
+      return;
+    }
+
+    res.status('400').json({
+      error: 'Bad Request',
+      message: 'Sign Up failed',
     });
-    return;
   }
 
-  res.status('400').json({
-    message: 'Sign In failed',
+  //error handling
+  res.status(404).json({
+    error: 'User Not Found',
+    message: 'Sign Ip failed',
   });
-  return;
 });
 
 // add data
@@ -57,9 +66,9 @@ app.post('/signUp', async (req, res) => {
 
     const newData = await data.save();
     if (newData === data) {
-      res.status(202).json({
+      res.status('200').json({
         message: 'Sign Up Successfully',
-        status: '201',
+        status: 200,
         newData: {
           email: newData.email,
           password: newData.password,
@@ -70,14 +79,14 @@ app.post('/signUp', async (req, res) => {
     }
 
     res.status('400').json({
-      error: 'failed',
+      error: 'Bad Request',
       message: 'Sign Up failed',
     });
   }
 
   //error handling
   res.status(404).json({
-    error: 'failed',
+    error: 'User Not Found',
     message: 'Sign Up failed',
   });
 });
@@ -92,21 +101,23 @@ app.put('/changePass', async (req, res) => {
     });
 
     if (modifiedCount) {
-      res.status('203').json({
+      res.status('200').json({
+        status: 200,
         message: 'Change Password Successfully',
       });
       return;
     }
 
     res.status('400').json({
+      error: 'Bad Request',
       message: 'Change Password Failed',
     });
     return;
   }
 
   //error handling
-  res.status(402).json({
-    error: 'failed',
+  res.status('404').json({
+    error: 'User Not Found',
     message: 'Change Password Failed',
   });
 });
