@@ -5,16 +5,16 @@ import ProductPage from '../product/index.js';
 
 const Home = () => {
   const type = useSelector((state) => state.modalSwitch);
-  const productChoice = useSelector((state) => state.productOption);
-  if (productChoice === status.signedIn) {
+  const statusChoice = useSelector((state) => state.statusOption);
+  if (statusChoice === status.signedIn) {
     return <ProductPage />;
   } else {
-    if (type === status.signedOut) {
-      return <div>You have not signed in yet</div>;
-    } else if (type === signModal.forgetPassword) {
+    if (type === signModal.forgetPassword) {
       return <SignModal show={true} type={type} email={type} />;
-    } else {
+    } else if (type === signModal.signIn || type === signModal.signUp) {
       return <SignModal show={true} type={type} />;
+    } else {
+      return <div>You have not signed in yet</div>;
     }
   }
 };

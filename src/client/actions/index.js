@@ -3,9 +3,10 @@
 2. open sign up
 3. open forget password
 */
-import { signModal, status } from '../constants/index.js';
+import { signModal, status, product } from '../constants/index.js';
 import { ajaxConfigHelper } from '../helper/index';
 
+// modal
 export const signOutClose =
   (dispatch) =>
   (choice = '') => {
@@ -42,6 +43,7 @@ export const passwordModal =
     });
   };
 
+// data transfer
 export const signUpData = (dispatch) => async (data) => {
   try {
     const response = await fetch('/signUp', ajaxConfigHelper(data));
@@ -80,4 +82,19 @@ export const modifyPassword = (dispatch) => async (data) => {
   } catch (error) {
     console.log(error);
   }
+};
+
+// product page
+export const createProduct = (dispatch) => () => {
+  dispatch({
+    type: product.createProduct,
+    payload: null,
+  });
+};
+
+export const showProduct = (dispatch) => () => {
+  dispatch({
+    type: product.showProducts,
+    payload: null,
+  });
 };

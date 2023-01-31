@@ -1,0 +1,13 @@
+.container {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+.title {
+  margin-left: 100px;
+}
+.btns {
+  margin-right: 100px;
+}

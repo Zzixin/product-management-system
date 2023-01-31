@@ -13,10 +13,11 @@ export const status = {
 };
 
 export const product = {
+  showProducts: 'showProducts',
   createProduct: 'createProduct',
   detailProduct: 'detailProduct',
   editProduct: 'editProduct',
-  addProduct: 'addProduct',
+  increaseProduct: 'increaseProduct',
   reduceProduct: 'reductProduct',
 };
 

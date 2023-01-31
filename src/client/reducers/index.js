@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { signModal, status } from '../constants';
+import { signModal, status, product } from '../constants';
 
 export const optionReducer = (state = status.signedOut, { type, payload }) => {
   // sign in, signup, forget
@@ -17,7 +17,7 @@ export const optionReducer = (state = status.signedOut, { type, payload }) => {
   }
 };
 
-export const productReducer = (state = status.signedOut, { type, payload }) => {
+export const statusReducer = (state = status.signedOut, { type, payload }) => {
   switch (type) {
     case status.signedIn:
       if (payload === 200) {
@@ -44,8 +44,20 @@ export const productReducer = (state = status.signedOut, { type, payload }) => {
   }
 };
 
+export const productReducer = (state = -1, { type, payload }) => {
+  switch (type) {
+    case product.createProduct:
+      return product.createProduct;
+    case product.showProducts:
+      return product.showProducts;
+    default:
+      return state;
+  }
+};
+
 const allReducers = combineReducers({
   modalSwitch: optionReducer,
+  statusOption: statusReducer,
   productOption: productReducer,
 });
 

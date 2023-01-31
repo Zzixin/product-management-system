@@ -1,7 +1,7 @@
 import { Layout, Input, Avatar, Badge } from 'antd';
 import { ShoppingCartOutlined, UserOutlined } from '@ant-design/icons';
 import { useDispatch } from 'react-redux';
-import { signInModal } from '../../actions/index.js';
+import { signInModal, signOutClose } from '../../actions/index.js';
 import { useSelector } from 'react-redux';
 import { signModal, status } from '../../constants';
 
@@ -13,10 +13,14 @@ const { Search } = Input;
 const MyHeader = () => {
   const onSearch = (value) => console.log(value);
   const dispatch = useDispatch();
-  const type = useSelector((state) => state.statusSwitch);
+  const currentState = useSelector((state) => state.statusOption);
 
   const handleOnclick = () => {
-    signInModal(dispatch)();
+    if (currentState === status.signedOut) {
+      signInModal(dispatch)();
+    } else {
+      signOutClose(dispatch)();
+    }
   };
 
   return (
@@ -38,7 +42,7 @@ const MyHeader = () => {
 
         <a className='headerSignIn' onClick={handleOnclick}>
           <UserOutlined style={{ fontSize: '20px', paddingRight: '10px' }} />
-          {type === status.signedIn ? 'Sign Out' : 'Sign In'}
+          {currentState === status.signedIn ? 'Sign Out' : 'Sign In'}
         </a>
 
         <span className='headerCart'>
