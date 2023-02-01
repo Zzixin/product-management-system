@@ -44,12 +44,28 @@ export const statusReducer = (state = status.signedOut, { type, payload }) => {
   }
 };
 
-export const productReducer = (state = -1, { type, payload }) => {
+export const productReducer = (
+  state = product.showProducts,
+  { type, payload }
+) => {
   switch (type) {
     case product.createProduct:
       return product.createProduct;
     case product.showProducts:
       return product.showProducts;
+    case product.addProduct2DB:
+      if (payload === 200) {
+        return product.showProducts;
+      }
+    default:
+      return state;
+  }
+};
+
+export const productManage = (state = [], { type, payload }) => {
+  switch (type) {
+    case product.showProductFromDB:
+      return [...payload];
     default:
       return state;
   }
@@ -59,6 +75,7 @@ const allReducers = combineReducers({
   modalSwitch: optionReducer,
   statusOption: statusReducer,
   productOption: productReducer,
+  productManage: productManage,
 });
 
 export default allReducers;

@@ -14,7 +14,9 @@ export const status = {
 
 export const product = {
   showProducts: 'showProducts',
+  showProductFromDB: 'showProductFromDB',
   createProduct: 'createProduct',
+  addProduct2DB: 'addProduct2DB',
   detailProduct: 'detailProduct',
   editProduct: 'editProduct',
   increaseProduct: 'increaseProduct',
@@ -25,4 +27,10 @@ export const displayOption = {
   lastAdd: 'Last added',
   priceL2H: 'Price: low to high',
   priceH2L: 'Price: high to low',
+};
+
+export const productCategory = {
+  Grocery: 'Grocery',
+  Electronics: 'Electronics',
+  GiftCards: 'Gift Cards',
 };

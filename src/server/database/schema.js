@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 }
 */
 
-const dataSchema = new mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
     email: {
       type: String,
@@ -28,4 +28,39 @@ const dataSchema = new mongoose.Schema(
   }
 );
 
-module.exports = dataSchema;
+const productSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+      required: true,
+    },
+    category: {
+      type: String,
+      required: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    quantity: {
+      type: Number,
+      required: true,
+    },
+    imageURL: {
+      type: String,
+      required: true,
+    },
+    id: {
+      type: String,
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+module.exports = { userSchema, productSchema };

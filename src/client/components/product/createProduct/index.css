@@ -1,0 +1,33 @@
+.create-container {
+  display: flex;
+  flex-direction: column;
+  max-width: 650px;
+  /* max-height: 900px; */
+  margin: auto;
+  margin-bottom: 85px;
+}
+
+.create-title {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 137.5%;
+  margin-bottom: 15px;
+}
+
+.create-form {
+  padding-top: 30px;
+  padding-inline: 25px;
+  background-color: white;
+  border-radius: 25px;
+  margin-bottom: 30px;
+}
+
+.image-preview {
+  border-style: dashed;
+  border-color: rgb(200, 200, 200);
+  border-width: 2px;
+  width: 300px;
+  margin: auto;
+}

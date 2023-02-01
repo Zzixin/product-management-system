@@ -1,13 +1,13 @@
-.container {
+.show-container {
   margin-top: 30px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
 }
-.title {
+.show-title {
   margin-left: 100px;
 }
-.btns {
+.show-btns {
   margin-right: 100px;
 }

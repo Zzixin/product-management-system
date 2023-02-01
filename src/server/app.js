@@ -10,7 +10,7 @@ const { v4: uuidv4 } = require('uuid');
 
 //connect to databse
 const connectToMongoose = require('./database/connect');
-const Data = require('./database/model');
+const { User, Product } = require('./database/model.js');
 connectToMongoose();
 
 var app = express();
@@ -33,7 +33,7 @@ app.post('/signIn', async (req, res) => {
   if (req.body) {
     const email = req.body.email;
     const password = req.body.password;
-    const queryResult = await Data.findOne({ email: email });
+    const queryResult = await User.findOne({ email: email });
     if (queryResult && queryResult.password === password) {
       res.status('200').json({
         status: 200,
@@ -58,7 +58,7 @@ app.post('/signIn', async (req, res) => {
 // add data
 app.post('/signUp', async (req, res) => {
   if (req.body) {
-    const data = new Data({
+    const data = new User({
       email: req.body.email,
       password: req.body.password,
       id: uuidv4(),
@@ -95,7 +95,7 @@ app.post('/signUp', async (req, res) => {
 app.put('/changePass', async (req, res) => {
   if (req.body) {
     const email = req.body.email;
-    const queryResult = await Data.findOne({ email: email });
+    const queryResult = await User.findOne({ email: email });
     const { modifiedCount } = await queryResult.updateOne({
       password: req.body.password,
     });
@@ -119,6 +119,59 @@ app.put('/changePass', async (req, res) => {
   res.status('404').json({
     error: 'User Not Found',
     message: 'Change Password Failed',
+  });
+});
+
+// product events
+//1. (GET method) => return all todos in the mock database
+app.get('/allProducts', async (_, res) => {
+  const productDataBase = await Product.find({});
+  const productList = productDataBase.map(
+    ({ name, description, category, price, quantity, imageURL }) => {
+      return {
+        name,
+        description,
+        category,
+        price,
+        quantity,
+        imageURL,
+      };
+    }
+  );
+  res.json(productList);
+});
+
+app.post('/addProduct', async (req, res) => {
+  if (req.body) {
+    const item = new Product({
+      name: req.body.name,
+      description: req.body.description,
+      category: req.body.category,
+      price: req.body.price,
+      quantity: req.body.quantity,
+      imageURL: req.body.imageURL,
+      id: uuidv4(),
+    });
+
+    const newItem = await item.save();
+    if (newItem === item) {
+      res.status('200').json({
+        message: 'create product Successfully',
+        status: 200,
+      });
+      return;
+    }
+
+    res.status('400').json({
+      error: 'Bad Request',
+      message: 'Sign Up failed',
+    });
+  }
+
+  //error handling
+  res.status(404).json({
+    error: 'User Not Found',
+    message: 'Sign Up failed',
   });
 });
 

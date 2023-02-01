@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const dataSchema = require('./schema');
+const { userSchema, productSchema } = require('./schema');
 
-const Data = mongoose.model('Data', dataSchema);
-module.exports = Data;
+const User = mongoose.model('Data', userSchema);
+const Product = mongoose.model('Product', productSchema);
+module.exports = { User, Product };

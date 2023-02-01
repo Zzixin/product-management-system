@@ -1,7 +1,7 @@
 import { Layout, Input, Avatar, Badge } from 'antd';
 import { ShoppingCartOutlined, UserOutlined } from '@ant-design/icons';
 import { useDispatch } from 'react-redux';
-import { signInModal, signOutClose } from '../../actions/index.js';
+import { signInModal, signOutClose, showProduct } from '../../actions/index.js';
 import { useSelector } from 'react-redux';
 import { signModal, status } from '../../constants';
 
@@ -18,6 +18,7 @@ const MyHeader = () => {
   const handleOnclick = () => {
     if (currentState === status.signedOut) {
       signInModal(dispatch)();
+      showProduct(dispatch)();
     } else {
       signOutClose(dispatch)();
     }

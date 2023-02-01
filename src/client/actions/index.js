@@ -98,3 +98,39 @@ export const showProduct = (dispatch) => () => {
     payload: null,
   });
 };
+
+// product data transfer
+export const showProductFromDB = (dispatch) => () => {
+  fetch('/allProducts')
+    .then((res) => res.json())
+    .then((data) =>
+      dispatch({
+        type: product.showProductFromDB,
+        payload: data,
+      })
+    )
+    .catch((error) =>
+      // dispatch({
+      //   type: ERROR,
+      //   payload: { error: true, message: 'init todos failed' },
+      // })
+      {
+        console.log(error);
+      }
+    );
+};
+
+export const addProduct2DB = (dispatch) => async (data) => {
+  try {
+    const response = await fetch('/addProduct', ajaxConfigHelper(data));
+    const result = await response.json();
+    dispatch({
+      type: product.addProduct2DB,
+      payload: result.status,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const editProduct2DB = (dispatch) => async () => {};
