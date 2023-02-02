@@ -1,54 +1,82 @@
 import { Button, Form, Input, Select, InputNumber, Empty, Image } from 'antd';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-
+import { useDispatch, useSelector } from 'react-redux';
 import { productCategory } from '../../../constants';
-import { addProduct2DB } from '../../../actions';
+import { addProduct2DB, showProduct, editProduct2DB } from '../../../actions';
 import './index.css';
 
-const ProductCreate = () => {
+const ProductCreate = ({ title = 'Create Product', btn = 'Add Product' }) => {
+  // const [title, setTitle] = useState('Edit Product');
+  // const [btn, setBtn] = useState('Edit Product');
+  // if (productData === {}) {
+  //   setTitle('Create Product');
+  //   setBtn('Add Product');
+  // }
+  let productData = useSelector((state) => state.productEdit);
+
+  if (title === 'Create Product') {
+    productData = {
+      category: productCategory.Grocery,
+      price: 0,
+      choose: 0,
+      quantity: 0,
+    };
+  }
+
+  let { name, description, category, price, choose, quantity, imageURL, id } =
+    productData;
+
   const dispatch = useDispatch();
-  const [productName, setProductName] = useState('');
-  const [productDescription, setProductDescription] = useState('');
-  const [category, setCategory] = useState(productCategory.Grocery);
-  const [price, setPrice] = useState(0);
-  const [quantity, setQuantity] = useState(0);
-  const [imageURL, setImageURL] = useState('');
+  const [productName, setProductName] = useState(name);
+  // const [productChoose, setProductChoose] = useState(choose);
+  const [productDescription, setProductDescription] = useState(description);
+  const [productCategory1, setProductCategory1] = useState(category);
+  const [productPrice, setProductPrice] = useState(price);
+  const [productQuantity, setProductQuantity] = useState(quantity);
+  const [productImageURL, setProductImageURL] = useState(imageURL);
   const [uploadImage, setUploadImage] = useState(
     <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description='image preivew' />
   );
 
-  const productDetail = {
-    name: productName,
-    description: productDescription,
-    category: category,
-    price: price,
-    quantity: quantity,
-    imageURL: imageURL,
-  };
-
   const onChangeCategory = (value) => {
     // console.log(`selected ${value}`);
-    setCategory(value);
+    setProductCategory1(value);
   };
 
   const onChangePrice = (value) => {
-    setPrice(value);
+    setProductPrice(value);
   };
 
   const onChangeQuantity = (value) => {
-    setQuantity(value);
+    setProductQuantity(value);
   };
 
   const handleUpload = () => {
-    if (imageURL) {
-      setUploadImage(<Image width={300} src={imageURL} />);
+    if (productImageURL) {
+      setUploadImage(<Image width={300} src={productImageURL} />);
     }
   };
 
   const handleSubmit = () => {
-    console.log(productDetail);
-    addProduct2DB(dispatch)(productDetail);
+    const productDetail = {
+      name: productName,
+      description: productDescription,
+      category: productCategory1,
+      choose: choose,
+      price: productPrice,
+      quantity: productQuantity,
+      imageURL: productImageURL,
+      id: id,
+    };
+    if (title === 'Create Product') {
+      addProduct2DB(dispatch)(productDetail);
+    } else {
+      editProduct2DB(dispatch)(productDetail);
+    }
+  };
+
+  const handleCancel = () => {
+    showProduct(dispatch)();
   };
 
   const validateMessages = {
@@ -63,7 +91,7 @@ const ProductCreate = () => {
 
   return (
     <div className='create-container'>
-      <p className='create-title'>Create Product</p>
+      <p className='create-title'>{title}</p>
       <Form
         validateMessages={validateMessages}
         style={{
@@ -104,7 +132,7 @@ const ProductCreate = () => {
             }}
           >
             <Select
-              defaultValue={category}
+              defaultValue={productCategory1}
               // onChange={(event) => setCategory(event.target.value)}
               style={{ width: 290, marginRight: 20 }}
               onChange={onChangeCategory}
@@ -139,7 +167,7 @@ const ProductCreate = () => {
             <InputNumber
               style={{ width: 290 }}
               min={0}
-              defaultValue={price}
+              defaultValue={productPrice}
               onChange={onChangePrice}
             />
           </Form.Item>
@@ -159,7 +187,7 @@ const ProductCreate = () => {
           >
             <InputNumber
               style={{ width: 200, marginRight: 20 }}
-              defaultValue={quantity}
+              defaultValue={productQuantity}
               onChange={onChangeQuantity}
             />
           </Form.Item>
@@ -174,9 +202,9 @@ const ProductCreate = () => {
               <Input
                 addonBefore='https://'
                 style={{ width: 300 }}
-                defaultValue={imageURL}
+                defaultValue={productImageURL}
                 onChange={(event) =>
-                  setImageURL('https://' + event.target.value)
+                  setProductImageURL('https://' + event.target.value)
                 }
               />
               <Button type='primary' onClick={handleUpload}>
@@ -191,9 +219,14 @@ const ProductCreate = () => {
         </Form.Item>
 
         <Form.Item>
-          <Button type='primary' onClick={handleSubmit}>
-            Add Product
+          <Button
+            type='primary'
+            onClick={handleSubmit}
+            style={{ marginRight: 20 }}
+          >
+            {btn}
           </Button>
+          <Button onClick={handleCancel}>Cancel</Button>
         </Form.Item>
       </Form>
     </div>

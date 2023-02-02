@@ -17,6 +17,7 @@ export const product = {
   showProductFromDB: 'showProductFromDB',
   createProduct: 'createProduct',
   addProduct2DB: 'addProduct2DB',
+  editProduct2DB: 'editProduct2DB',
   detailProduct: 'detailProduct',
   editProduct: 'editProduct',
   increaseProduct: 'increaseProduct',

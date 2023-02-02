@@ -92,10 +92,24 @@ export const createProduct = (dispatch) => () => {
   });
 };
 
+export const editProduct = (dispatch) => (productInfo) => {
+  dispatch({
+    type: product.editProduct,
+    payload: productInfo,
+  });
+};
+
 export const showProduct = (dispatch) => () => {
   dispatch({
     type: product.showProducts,
-    payload: null,
+    payload: {},
+  });
+};
+
+export const productDetail = (dispatch) => (productInfo) => {
+  dispatch({
+    type: product.detailProduct,
+    payload: productInfo,
   });
 };
 
@@ -133,4 +147,15 @@ export const addProduct2DB = (dispatch) => async (data) => {
   }
 };
 
-export const editProduct2DB = (dispatch) => async () => {};
+export const editProduct2DB = (dispatch) => async (data) => {
+  try {
+    const response = await fetch('/editProduct', ajaxConfigHelper(data, 'PUT'));
+    const result = await response.json();
+    dispatch({
+      type: product.editProduct2DB,
+      payload: result.status,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};

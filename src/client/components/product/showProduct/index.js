@@ -1,14 +1,21 @@
-import { Button, Select } from 'antd';
+import { Button, Select, Col, Row, InputNumber, Image, Input } from 'antd';
 import { displayOption } from '../../../constants';
 import { createProduct } from '../../../actions/index.js';
 import { useDispatch, useSelector } from 'react-redux';
-import { showProduct } from '../../../actions/index.js';
+import { useEffect } from 'react';
+import { showProductFromDB } from '../../../actions/index.js';
+import ColItem from './colItem';
 import './index.css';
 
 const ProductDisplay = () => {
   const dispatch = useDispatch();
-  const productData = useSelector((state) => state.productManage);
+  // useEffect(() => {
+  //   showProductFromDB(dispatch)();
+  // }, dispatch);
 
+  // showProductFromDB(dispatch)();
+  const productData = useSelector((state) => state.productManage);
+  // const productData = useSelector((state) => state.productManage);
   const handleChange = (value) => {
     console.log(`selected ${value}`);
   };
@@ -18,13 +25,21 @@ const ProductDisplay = () => {
     createProduct(dispatch)();
   };
 
-  const handleTEst = () => {
-    console.log(productData);
+  // if (productData) {
+  //   setImageGrid(
+  //     productData.map(({ name, price, quantity, imageURL }) => {
+  //       return colCell(name, price, quantity, imageURL);
+  //     })
+  //   );
+  // }
+
+  const onChange = (value) => {
+    console.log(value);
   };
 
   return (
     <div>
-      <div className='show-container'>
+      <div className='show-header'>
         <h1 className='show-title'>Product</h1>
         <div className='show-btns'>
           <Select
@@ -46,12 +61,22 @@ const ProductDisplay = () => {
               },
             ]}
           />
-          <Button type='primary' onClick={handleAddProduct}>
+          <Button
+            type='primary'
+            onClick={handleAddProduct}
+            style={{ marginLeft: 20 }}
+          >
             add product
           </Button>
         </div>
       </div>
-      <Button onClick={handleTEst}> Button </Button>
+      <div className='grid-container'>
+        <Row gutter={[24, 24]} justify='start' className='grid-row'>
+          {productData.map((item) => {
+            return <ColItem product={item} key={item.id} />;
+          })}
+        </Row>
+      </div>
     </div>
   );
 };

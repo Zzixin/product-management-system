@@ -1,13 +1,70 @@
-.show-container {
+.show-header {
   margin-top: 30px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  width: 86%;
+  margin: auto;
 }
-.show-title {
+
+/* .show-title {
   margin-left: 100px;
 }
 .show-btns {
   margin-right: 100px;
+} */
+
+.grid-container {
+  background-color: white;
+  width: 86%;
+  max-width: 2000px;
+  height: 80%;
+  min-height: 610px;
+  margin: auto;
+  margin-bottom: 90px;
+}
+
+.grid-row {
+  padding-left: 40px;
+  padding-right: 20px;
+  padding-top: 15px;
+}
+
+.grid-col {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-style: ridge;
+  border-width: 1px;
+  border-color: rgb(200, 200, 200);
+  margin-right: 40px;
+}
+
+.col-name {
+  margin-top: 5px;
+  color: grey;
+}
+
+.col-price {
+  margin-top: 5px;
+  font-weight: bold;
+}
+
+.col-span-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 5px;
+}
+
+.add-minus-btn {
+  margin-bottom: 0;
+  width: 25%;
+}
+.quantity-input {
+  width: 30%;
+}
+
+.quantity-btn {
+  width: 50%;
 }

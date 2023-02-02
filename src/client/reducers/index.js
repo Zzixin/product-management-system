@@ -53,7 +53,15 @@ export const productReducer = (
       return product.createProduct;
     case product.showProducts:
       return product.showProducts;
+    case product.editProduct:
+      return product.editProduct;
+    case product.detailProduct:
+      return product.detailProduct;
     case product.addProduct2DB:
+      if (payload === 200) {
+        return product.showProducts;
+      }
+    case product.editProduct2DB:
       if (payload === 200) {
         return product.showProducts;
       }
@@ -71,11 +79,23 @@ export const productManage = (state = [], { type, payload }) => {
   }
 };
 
+export const productEdit = (state = {}, { type, payload }) => {
+  switch (type) {
+    case product.editProduct:
+      return payload;
+    case product.detailProduct:
+      return payload;
+    default:
+      return state;
+  }
+};
+
 const allReducers = combineReducers({
   modalSwitch: optionReducer,
   statusOption: statusReducer,
   productOption: productReducer,
   productManage: productManage,
+  productEdit: productEdit,
 });
 
 export default allReducers;

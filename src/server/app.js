@@ -127,14 +127,25 @@ app.put('/changePass', async (req, res) => {
 app.get('/allProducts', async (_, res) => {
   const productDataBase = await Product.find({});
   const productList = productDataBase.map(
-    ({ name, description, category, price, quantity, imageURL }) => {
+    ({
+      name,
+      description,
+      category,
+      price,
+      choose,
+      quantity,
+      imageURL,
+      id,
+    }) => {
       return {
         name,
         description,
         category,
         price,
+        choose,
         quantity,
         imageURL,
+        id,
       };
     }
   );
@@ -148,6 +159,7 @@ app.post('/addProduct', async (req, res) => {
       description: req.body.description,
       category: req.body.category,
       price: req.body.price,
+      choose: req.body.choose,
       quantity: req.body.quantity,
       imageURL: req.body.imageURL,
       id: uuidv4(),
@@ -164,14 +176,51 @@ app.post('/addProduct', async (req, res) => {
 
     res.status('400').json({
       error: 'Bad Request',
-      message: 'Sign Up failed',
+      message: 'Create Product Failed',
     });
   }
 
   //error handling
   res.status(404).json({
-    error: 'User Not Found',
-    message: 'Sign Up failed',
+    error: 'Product Not Found',
+    message: 'Create Product Failed',
+  });
+});
+
+// PUT, modify product detail
+app.put('/editProduct', async (req, res) => {
+  if (req.body) {
+    const id = req.body.id;
+    const queryResult = await Product.findOne({ id: id });
+    const { modifiedCount } = await queryResult.updateOne({
+      name: req.body.name,
+      description: req.body.description,
+      category: req.body.category,
+      price: req.body.price,
+      choose: req.body.choose,
+      quantity: req.body.quantity,
+      imageURL: req.body.imageURL,
+    });
+
+    if (modifiedCount) {
+      res.status('200').json({
+        status: 200,
+        message: 'edit product Successfully',
+      });
+      return;
+    }
+
+    res.status('400').json({
+      error: 'Bad Request',
+      message: 'edit product failed',
+    });
+    return;
+  }
+
+  //error handling
+  res.status('404').json({
+    error: 'Product Not Found',
+    message: 'Edit Product Failed',
   });
 });
 
