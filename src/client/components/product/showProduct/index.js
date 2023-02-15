@@ -1,28 +1,83 @@
-import { Button, Select, Col, Row, InputNumber, Image, Input } from 'antd';
+import { Button, Select, Pagination, Row } from 'antd';
 import { displayOption } from '../../../constants';
 import { createProduct } from '../../../actions/index.js';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
-import { showProductFromDB } from '../../../actions/index.js';
+import { useEffect, useState } from 'react';
+import { showProductFromDB, getCart } from '../../../actions/index.js';
 import ColItem from './colItem';
+import EmptyItem from './emptyItem';
 import './index.css';
+import ErrorPage from '../../errorPage';
 
-const ProductDisplay = () => {
+const ProductDisplay = ({
+  setIsShowProducts,
+  setIsCreateProduct,
+  setIsEditProduct,
+  setIsShowDetail,
+  isAdmin,
+  isSignedIn,
+  user,
+  isSearch,
+}) => {
   const dispatch = useDispatch();
   // useEffect(() => {
   //   showProductFromDB(dispatch)();
   // }, dispatch);
-
   // showProductFromDB(dispatch)();
-  const productData = useSelector((state) => state.productManage);
-  // const productData = useSelector((state) => state.productManage);
+  const pData = useSelector((state) => state.productManage);
+  const searchData = useSelector((state) => state.searchReducer);
+  const productEdit = useSelector((state) => state.productEdit);
+  const cartData = useSelector((state) => state.getCartInfo);
+  const memo = useSelector((state) => state.someMemo);
+  // const [tmpCart, setTmpCart] = useState(sessionStorage.getItem('cart'));
+  // const [cartData, setCartData] = useState(cartDataDB);
+  // useEffect(() => {
+  //   if (!isSignedIn) {
+  //     if (sessionStorage.getItem('cart') !== null) {
+  //       setCartData([]);
+  //     }
+  //   }
+  // }, []);
+
+  const [productData, setProductData] = useState(pData);
+
+  useEffect(() => {
+    if (isSearch) {
+      setProductData(searchData);
+    } else {
+      setProductData(pData);
+    }
+  }, [searchData, isSearch]);
+
+  useEffect(() => {
+    setProductData(pData);
+  }, [pData]);
+
+  const [numOfProduct, setNum] = useState(productData.length);
+  const [gridShowPage, setGridShowPage] = useState(1);
+  useEffect(() => {
+    setNum(productData.length);
+  }, [productData]);
+
+  useEffect(() => {
+    if (memo.user) {
+      getCart(dispatch)(memo.user);
+    }
+  }, [memo]);
+
+  useEffect(() => {
+    showProductFromDB(dispatch)();
+    console.log('test2');
+  }, [productEdit]);
+
   const handleChange = (value) => {
     console.log(`selected ${value}`);
   };
 
   const handleAddProduct = () => {
-    console.log('add');
-    createProduct(dispatch)();
+    setIsCreateProduct(true);
+    setIsShowProducts(false);
+    //createProduct(dispatch)();
   };
 
   // if (productData) {
@@ -34,51 +89,97 @@ const ProductDisplay = () => {
   // }
 
   const onChange = (value) => {
-    console.log(value);
+    setGridShowPage(value);
   };
 
-  return (
-    <div>
-      <div className='show-header'>
-        <h1 className='show-title'>Product</h1>
-        <div className='show-btns'>
-          <Select
-            defaultValue={displayOption.lastAdd}
-            style={{ width: 160 }}
-            onChange={handleChange}
-            options={[
-              {
-                value: displayOption.lastAdd,
-                label: displayOption.lastAdd,
-              },
-              {
-                value: displayOption.priceL2H,
-                label: displayOption.priceL2H,
-              },
-              {
-                value: displayOption.priceH2L,
-                label: displayOption.priceH2L,
-              },
-            ]}
-          />
-          <Button
-            type='primary'
-            onClick={handleAddProduct}
-            style={{ marginLeft: 20 }}
-          >
-            add product
-          </Button>
+  if (productData.length === 0) {
+    if (isSearch) {
+      //return setTimeout(<></>, 2000);
+      // return <EmptyItem />;
+      return <></>;
+    } else {
+      // return <ErrorPage />;
+      return <></>;
+    }
+  } else {
+    return (
+      <div>
+        <div className='show-header'>
+          <h1 className='show-title'>Products</h1>
+          <div className='show-btns'>
+            <Select
+              defaultValue={displayOption.lastAdd}
+              style={{ width: 160 }}
+              onChange={handleChange}
+              options={[
+                {
+                  value: displayOption.lastAdd,
+                  label: displayOption.lastAdd,
+                },
+                {
+                  value: displayOption.priceL2H,
+                  label: displayOption.priceL2H,
+                },
+                {
+                  value: displayOption.priceH2L,
+                  label: displayOption.priceH2L,
+                },
+              ]}
+              disabled={isSignedIn ? false : true}
+            />
+            {isAdmin ? (
+              <Button
+                type='primary'
+                onClick={handleAddProduct}
+                style={{ marginLeft: 20 }}
+              >
+                add product
+              </Button>
+            ) : (
+              <></>
+            )}
+          </div>
         </div>
+        <div className='grid-container'>
+          <Row
+            gutter={[16, { xs: 8, sm: 16, md: 24, lg: 24 }]}
+            justify='start'
+            className='grid-row'
+          >
+            {productData.map((item, index) => {
+              if (
+                index >= (gridShowPage - 1) * 10 &&
+                index < gridShowPage * 10
+              ) {
+                const res = cartData.find((ele) => ele.id === item.id);
+                return (
+                  <ColItem
+                    product={item}
+                    key={item.id}
+                    setIsShowProducts={setIsShowProducts}
+                    setIsEditProduct={setIsEditProduct}
+                    setIsShowDetail={setIsShowDetail}
+                    isAdmin={isAdmin}
+                    isSignedIn={isSignedIn}
+                    productNum={res ? res.num : 0}
+                    user={user}
+                  />
+                );
+              }
+            })}
+          </Row>
+        </div>
+        {/* {gridShowPage} */}
+        <Pagination
+          className='pagination'
+          defaultCurrent={1}
+          total={numOfProduct}
+          onChange={onChange}
+          size='small'
+        />
       </div>
-      <div className='grid-container'>
-        <Row gutter={[24, 24]} justify='start' className='grid-row'>
-          {productData.map((item) => {
-            return <ColItem product={item} key={item.id} />;
-          })}
-        </Row>
-      </div>
-    </div>
-  );
+    );
+  }
 };
 
 export default ProductDisplay;

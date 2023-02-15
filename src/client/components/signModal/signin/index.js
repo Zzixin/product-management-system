@@ -1,22 +1,76 @@
-import { Button, Form, Input } from 'antd';
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { signUpModal } from '../../../actions/index.js';
-import { passwordModal } from '../../../actions/index.js';
-import { signInData } from '../../../actions/index.js';
+import { Button, Form, Input, message } from 'antd';
+import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  signInData,
+  signInDefault,
+  memoCookie,
+  getCart,
+} from '../../../actions/index.js';
+import { status } from '../../../constants/index.js';
 import './index.css';
 
-const SignIn = ({}) => {
+const SignIn = ({
+  setSignIn,
+  setSignUp,
+  setEditPassword,
+  setIsSignedIn,
+  setUser,
+  setAdmin,
+}) => {
+  const [messageApi, contextHolder] = message.useMessage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailValidateType, setEmailValidateType] = useState('onBlur');
   const [emailFeedbackState, setEmailFeedbackState] = useState(false);
 
   const dispatch = useDispatch();
+  const { type, error, msg } = useSelector((state) => state.statusOption);
+
+  useEffect(() => {
+    signInDefault(dispatch)(); // make the statusOption to the default one
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (type === status.signedUp && error === false) {
+      messageApi.open({
+        key: 'signUp',
+        type: 'success',
+        content: 'Sign up successfully.',
+      });
+      message.destroy();
+    }
+
+    if (type === status.changedPassword && error === false) {
+      messageApi.open({
+        key: 'passwordChange',
+        type: 'success',
+        content: 'Change Password Successfully.',
+      });
+    }
+
+    if (type === status.signedIn && error !== undefined) {
+      messageApi.open({
+        type: { error } ? 'error' : 'success',
+        content: msg,
+      });
+
+      if (type === status.signedIn && error === false) {
+        signInDefault(dispatch)();
+        setUser(email);
+        if (email === 'admin@gmail.com') {
+          setAdmin(true);
+        }
+        setIsSignedIn(true);
+        memoCookie(dispatch)({ user: email, isSignedIn: true });
+        getCart(dispatch)(email);
+        // sessionStorage.setItem('current', email);
+        // signInSuccess(dispatch)();
+      }
+    }
+  }, [msg]);
 
   const handleSubmit = () => {
-    console.log('email:', email);
-    console.log('password:', password);
     signInData(dispatch)({
       email: email,
       password: password,
@@ -24,16 +78,21 @@ const SignIn = ({}) => {
   };
 
   const handleSignUp = () => {
-    signUpModal(dispatch)();
+    setSignIn(false);
+    setSignUp(true);
+    setEditPassword(false);
   };
 
   const handlePassword = () => {
-    passwordModal(dispatch)(email);
+    setSignIn(false);
+    setSignUp(false);
+    setEditPassword(true);
   };
 
   return (
     <div>
-      <Form layout='vertical'>
+      {contextHolder}
+      <Form layout='vertical' onFinish={handleSubmit}>
         <Form.Item
           name='email'
           validateTrigger={emailValidateType}
@@ -41,7 +100,7 @@ const SignIn = ({}) => {
           rules={[
             {
               type: 'email',
-              message: 'The input is not valid E-mail!',
+              message: 'Please input a valid email address',
             },
             {
               required: true,
@@ -76,7 +135,8 @@ const SignIn = ({}) => {
         >
           <Input.Password />
         </Form.Item>
-        <Button type='primary' className='signInBtn' onClick={handleSubmit}>
+
+        <Button type='primary' className='signInBtn' htmlType='submit'>
           Sign In
         </Button>
       </Form>
@@ -86,7 +146,6 @@ const SignIn = ({}) => {
         </span>
 
         <a id='signin-forgetpassword' onClick={handlePassword}>
-          {' '}
           Forget password
         </a>
       </div>

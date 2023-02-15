@@ -1,7 +1,11 @@
 .header {
+  background-color: rgb(21, 21, 21);
+  height: 70px;
   position: 'sticky';
   display: flex;
   flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
 }
 
 .headerText1 {
@@ -17,40 +21,76 @@
 
 .headerLogo {
   color: white;
-  flex-grow: 0.5;
-  margin-right: 50px;
+  text-decoration: none;
 }
 
 .headerInput {
-  width: 40%;
-  flex-grow: 0;
-  padding-right: 10px;
-  /* margin-right: 170px; */
-  margin-top: 13px;
+  width: 35%;
 }
 
 .headerSignIn {
   color: white;
   font-weight: bold;
-  margin-left: 200px;
+  text-decoration: none;
 }
 
 .headerCart {
+  margin-top: 10px;
   color: white;
   font-weight: bold;
-  margin-left: 100px;
+  text-decoration: none;
+  width: 100px;
 }
 
 #amount {
   margin-left: 10px;
 }
 
-a.headerLogo {
-  color: white;
+@media (min-width: 1100px) {
+  .headerText3 {
+    display: none;
+  }
 }
-a.headerSignIn {
-  color: white;
-}
-a.headerCart {
-  color: white;
+
+@media (max-width: 768px) {
+  .header {
+    flex-wrap: wrap;
+    height: 110px;
+    justify-content: center;
+  }
+  .headerText1 {
+    display: none;
+  }
+  .headerText2 {
+    font-size: 15px;
+    font-weight: bold;
+    padding-left: 0;
+  }
+  .headerText3 {
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  #signIn-text {
+    display: none;
+  }
+
+  #signout-icon {
+    display: none;
+  }
+
+  .headerInput {
+    order: 10;
+    width: 80%;
+    padding-bottom: 10px;
+  }
+
+  .headerSignIn {
+    padding-top: 5px;
+    margin-left: 110px;
+  }
+
+  .headerCart {
+    margin-left: 10px;
+  }
 }

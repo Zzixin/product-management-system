@@ -1,10 +1,4 @@
 // LOG IN PAGE
-export const signModal = {
-  signIn: 'signIn',
-  signUp: 'signUp',
-  forgetPassword: 'forgetPassowrd',
-};
-
 export const status = {
   signedIn: 'signedIn',
   signedOut: 'signedOut',

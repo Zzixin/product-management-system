@@ -1,11 +1,18 @@
 import { Button, Form, Input, Select, InputNumber, Empty, Image } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { productCategory } from '../../../constants';
 import { addProduct2DB, showProduct, editProduct2DB } from '../../../actions';
 import './index.css';
 
-const ProductCreate = ({ title = 'Create Product', btn = 'Add Product' }) => {
+const ProductCreate = ({
+  title = 'Create Product',
+  btn = 'Add Product',
+  setIsShowProducts,
+  setIsCreateProduct,
+  setIsEditProduct,
+}) => {
   // const [title, setTitle] = useState('Edit Product');
   // const [btn, setBtn] = useState('Edit Product');
   // if (productData === {}) {
@@ -18,17 +25,15 @@ const ProductCreate = ({ title = 'Create Product', btn = 'Add Product' }) => {
     productData = {
       category: productCategory.Grocery,
       price: 0,
-      choose: 0,
       quantity: 0,
     };
   }
 
-  let { name, description, category, price, choose, quantity, imageURL, id } =
+  let { name, description, category, price, quantity, imageURL, id } =
     productData;
 
   const dispatch = useDispatch();
   const [productName, setProductName] = useState(name);
-  // const [productChoose, setProductChoose] = useState(choose);
   const [productDescription, setProductDescription] = useState(description);
   const [productCategory1, setProductCategory1] = useState(category);
   const [productPrice, setProductPrice] = useState(price);
@@ -57,26 +62,39 @@ const ProductCreate = ({ title = 'Create Product', btn = 'Add Product' }) => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const productDetail = {
       name: productName,
       description: productDescription,
       category: productCategory1,
-      choose: choose,
       price: productPrice,
       quantity: productQuantity,
       imageURL: productImageURL,
       id: id,
     };
     if (title === 'Create Product') {
-      addProduct2DB(dispatch)(productDetail);
+      const status = await addProduct2DB(dispatch)(productDetail);
+      console.log(status);
+      // without error handling
+      if (status === 200) {
+        setIsCreateProduct(false);
+        setIsShowProducts(true);
+      }
     } else {
-      editProduct2DB(dispatch)(productDetail);
+      const status = await editProduct2DB(dispatch)(productDetail);
+      // without error handling
+      if (status === 200) {
+        setIsEditProduct(false);
+        setIsShowProducts(true);
+      }
     }
   };
 
   const handleCancel = () => {
-    showProduct(dispatch)();
+    // showProduct(dispatch)();
+    setIsCreateProduct(false);
+    setIsEditProduct(false);
+    setIsShowProducts(true);
   };
 
   const validateMessages = {
@@ -99,6 +117,7 @@ const ProductCreate = ({ title = 'Create Product', btn = 'Add Product' }) => {
         }}
         layout='vertical'
         className='create-form'
+        onFinish={handleSubmit}
       >
         <Form.Item
           name='productName'
@@ -115,7 +134,15 @@ const ProductCreate = ({ title = 'Create Product', btn = 'Add Product' }) => {
           />
         </Form.Item>
 
-        <Form.Item name='productDescription' label='Product Description'>
+        <Form.Item
+          name='productDescription'
+          label='Product Description'
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+        >
           <Input.TextArea
             style={{ height: 100 }}
             defaultValue={productDescription}
@@ -130,6 +157,11 @@ const ProductCreate = ({ title = 'Create Product', btn = 'Add Product' }) => {
               display: 'inline-block',
               // width: 'calc(50% + 10px)',
             }}
+            rules={[
+              {
+                required: true,
+              },
+            ]}
           >
             <Select
               defaultValue={productCategory1}
@@ -159,6 +191,9 @@ const ProductCreate = ({ title = 'Create Product', btn = 'Add Product' }) => {
               {
                 type: 'number',
               },
+              {
+                required: true,
+              },
             ]}
             style={{
               display: 'inline-block',
@@ -173,12 +208,23 @@ const ProductCreate = ({ title = 'Create Product', btn = 'Add Product' }) => {
           </Form.Item>
         </Form.Item>
 
-        <Form.Item>
+        <Form.Item
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+        >
           <Form.Item
             label='In Stock Quantity'
+            validateTrigger='onBlur'
             rules={[
               {
                 type: 'number',
+                message: 'input number',
+              },
+              {
+                required: true,
               },
             ]}
             style={{
@@ -197,6 +243,11 @@ const ProductCreate = ({ title = 'Create Product', btn = 'Add Product' }) => {
             style={{
               display: 'inline-block',
             }}
+            rules={[
+              {
+                required: true,
+              },
+            ]}
           >
             <Input.Group compact>
               <Input
@@ -208,7 +259,7 @@ const ProductCreate = ({ title = 'Create Product', btn = 'Add Product' }) => {
                 }
               />
               <Button type='primary' onClick={handleUpload}>
-                Upload
+                <UploadOutlined />
               </Button>
             </Input.Group>
           </Form.Item>
@@ -218,11 +269,12 @@ const ProductCreate = ({ title = 'Create Product', btn = 'Add Product' }) => {
           <div className='image-preview'>{uploadImage}</div>
         </Form.Item>
 
-        <Form.Item>
+        <Form.Item className='upload-btn'>
           <Button
             type='primary'
-            onClick={handleSubmit}
+            // onClick={handleSubmit}
             style={{ marginRight: 20 }}
+            htmlType='submit'
           >
             {btn}
           </Button>

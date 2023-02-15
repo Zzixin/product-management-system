@@ -1,44 +1,76 @@
 import { combineReducers } from 'redux';
-import { signModal, status, product } from '../constants';
+import { status, product } from '../constants';
 
-export const optionReducer = (state = status.signedOut, { type, payload }) => {
-  // sign in, signup, forget
+// export const optionReducer = (state = status.signedOut, { type, payload }) => {
+//   // sign in, signup, forget
+//   switch (type) {
+//     case signModal.signIn:
+//       return signModal.signIn;
+//     case signModal.signUp:
+//       return signModal.signUp;
+//     case signModal.forgetPassword:
+//       return signModal.forgetPassword;
+//     case status.signedOut:
+//       return status.signedOut;
+//     default:
+//       return state;
+//   }
+// };
+
+export const reducer1 = (state = 'SignOutSuccess', { type, payload }) => {
   switch (type) {
-    case signModal.signIn:
-      return signModal.signIn;
-    case signModal.signUp:
-      return signModal.signUp;
-    case signModal.forgetPassword:
-      return signModal.forgetPassword;
-    case status.signedOut:
-      return status.signedOut;
+    case 'SignInSuccess':
+      return 'SignInSuccess';
+    case 'SignOutSuccess':
+      return 'SignOutSuccess';
     default:
-      return state;
+      return 'SignOutSuccess';
   }
 };
 
-export const statusReducer = (state = status.signedOut, { type, payload }) => {
+export const reducer2 = (
+  state = { user: '', isSignedIn: false },
+  { type, payload }
+) => {
+  if (type === 'doSomeMemo') {
+    return payload;
+  } else {
+    return state;
+  }
+};
+
+export const statusReducer = (
+  state = { type: '', error: true, msg: '' },
+  { type, payload }
+) => {
   switch (type) {
     case status.signedIn:
-      if (payload === 200) {
-        return status.signedIn;
+      if (payload.status === 200) {
+        return { type: status.signedIn, error: false, msg: payload.message };
       } else {
-        return status.signedOut;
+        return { type: status.signedIn, error: true, msg: payload.message };
       }
     case status.signedUp:
-      if (payload === 200) {
-        return status.signedUp;
+      if (payload.status === 200) {
+        return { type: status.signedUp, error: false, msg: payload.message };
       } else {
-        return status.signedOut;
       }
     case status.changedPassword:
       if (payload === 200) {
-        return status.changedPassword;
+        return {
+          type: status.changedPassword,
+          error: false,
+          msg: payload.message,
+        };
       } else {
-        return status.signedOut;
+        return {
+          type: status.changedPassword,
+          error: true,
+          msg: payload.message,
+        };
       }
-    case status.signedOut:
-      return status.signedOut;
+    case 'default':
+      return { type: '', error: true, msg: '' };
     default:
       return state;
   }
@@ -64,6 +96,7 @@ export const productReducer = (
     case product.editProduct2DB:
       if (payload === 200) {
         return product.showProducts;
+        // return;
       }
     default:
       return state;
@@ -73,7 +106,7 @@ export const productReducer = (
 export const productManage = (state = [], { type, payload }) => {
   switch (type) {
     case product.showProductFromDB:
-      return [...payload];
+      return payload;
     default:
       return state;
   }
@@ -90,12 +123,48 @@ export const productEdit = (state = {}, { type, payload }) => {
   }
 };
 
+export const getCartInfo = (state = [], { type, payload }) => {
+  switch (type) {
+    case 'getCartInfo':
+      return [...payload];
+    case 'addToCart':
+      return [...state, { ...payload }];
+    case 'editToCart':
+      return state.map((item) => {
+        if (payload.id !== item.id) {
+          return item;
+        }
+        return { ...item, num: payload.num };
+      });
+    case 'delToCart':
+      return state.filter(({ id }) => {
+        return id !== payload.id;
+      });
+    default:
+      return state;
+  }
+};
+
+export const searchReducer = (state = [], { type, payload }) => {
+  switch (type) {
+    case 'searchItem':
+      return [...payload];
+    case 'NotsearchItem':
+      return state;
+    default:
+      return state;
+  }
+};
+
 const allReducers = combineReducers({
-  modalSwitch: optionReducer,
+  signInOut: reducer1,
+  someMemo: reducer2,
   statusOption: statusReducer,
-  productOption: productReducer,
+  // productOption: productReducer,
   productManage: productManage,
   productEdit: productEdit,
+  getCartInfo: getCartInfo,
+  searchReducer: searchReducer,
 });
 
 export default allReducers;

@@ -1,5 +1,10 @@
 import { Space } from 'antd';
-import { createFromIconfontCN } from '@ant-design/icons';
+import {
+  createFromIconfontCN,
+  YoutubeFilled,
+  FacebookFilled,
+  TwitterOutlined,
+} from '@ant-design/icons';
 
 import './index.css';
 
@@ -23,9 +28,12 @@ const MyFooter = () => {
     <footer>
       <Space id='footerCopyRight'>&copy;2023 All rights reserved</Space>
       <Space size={10} id='footerIcon'>
-        <IconFont type='icon-tuichu' />
+        {/* <IconFont type='icon-tuichu' />
         <IconFont type='icon-twitter' />
-        <IconFont type='icon-facebook' />
+        <IconFont type='icon-facebook' /> */}
+        <YoutubeFilled />
+        <FacebookFilled />
+        <TwitterOutlined />
       </Space>
       <Space size={20} id='footerOthers'>
         <span>contact us</span>

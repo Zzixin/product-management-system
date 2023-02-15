@@ -30,3 +30,14 @@
   width: 300px;
   margin: auto;
 }
+
+@media (max-width: 768px) {
+  .create-title {
+    color: black;
+    text-align: center;
+  }
+
+  .upload-btn {
+    text-align: center;
+  }
+}

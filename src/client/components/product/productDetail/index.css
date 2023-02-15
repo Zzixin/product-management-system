@@ -17,23 +17,59 @@
   margin: auto;
   margin-bottom: 90px;
   display: flex;
+  padding-right: 10px;
+}
+
+#addBtn {
+  margin-top: 40px;
+  margin-left: 5px;
+}
+
+#addInput {
+  margin-left: 5px;
 }
 
 .detail-content {
-  width: 45%;
-  margin-top: 20px;
-  margin-left: 20px;
 }
 
-.detail-btns {
-  margin-top: 50px;
-}
+/* .detail-btns {
+  margin-top: 40px;
+} */
 
 #edit-btn {
   margin-left: 20px;
   margin-right: 20px;
+  margin-top: 40px;
+}
+
+#backBtn {
+  margin-top: 40px;
+  margin-left: 20px;
 }
 
 p {
   color: gray;
+}
+
+@media (max-width: 768px) {
+  .detail-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .detail-img {
+    margin-left: 25px;
+  }
+
+  .detail-content {
+    width: 80%;
+    margin-left: 15px;
+    margin-right: 15px;
+  }
+
+  .detail-btns {
+    margin-top: 0;
+    margin-bottom: 30px;
+  }
 }

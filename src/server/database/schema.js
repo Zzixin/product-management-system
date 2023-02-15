@@ -22,6 +22,12 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    cart: [
+      {
+        id: { type: String, required: true },
+        num: { type: Number, required: true },
+      },
+    ],
   },
   {
     timestamps: true,
@@ -46,10 +52,6 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    choose: {
-      type: Number,
-      required: true,
-    },
     quantity: {
       type: Number,
       required: true,
@@ -67,4 +69,5 @@ const productSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
 module.exports = { userSchema, productSchema };

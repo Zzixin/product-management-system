@@ -1,33 +1,113 @@
 import { Col, Image, Input, Button, InputNumber } from 'antd';
 import { editProduct, editProduct2DB } from '../../../actions';
-import { useDispatch } from 'react-redux';
-import { showProductFromDB } from '../../../actions';
-import { productDetail } from '../../../actions';
-import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  productDetail,
+  addCart,
+  editCart,
+  delCartItem,
+} from '../../../actions';
+import { useEffect, useState } from 'react';
 import './index.css';
+import { userSchema } from '../../../../server/database/schema';
 
-const ColItem = ({ product }) => {
-  const { name, price, choose, imageURL, id } = product;
+const ColItem = ({
+  product,
+  setIsShowProducts,
+  setIsEditProduct,
+  setIsShowDetail,
+  isAdmin,
+  isSignedIn,
+  productNum,
+  user,
+}) => {
+  const { name, price, quantity, imageURL, id } = product;
+  const [amount, setAmount] = useState(productNum); // amount of products
+  // const [tmpCart, setTmpCart] = useState(sessionStorage.getItem('cart'));
+
   const dispatch = useDispatch();
-  const [productChoose, setProductChoose] = useState(choose);
+  const memo = useSelector((state) => state.someMemo);
+  const cartData = useSelector((state) => state.getCartInfo);
+
+  // useEffect(() => {
+  //   if (cartData.length > 0) {
+  //     let target = cartData.find((item) => item.id === id);
+  //     if (target) {
+  //       setAmount(target.num);
+  //     }
+  //   }
+  // }, [id]);
+
+  // useEffect(() => {
+  //   sessionStorage.setItem('cart', tmpCart);
+  // }, [tmpCart]);
+
+  useEffect(() => {
+    setAmount(productNum);
+    // if (memo.isSignedIn === false) {
+    //   if (tmpCart === null) {
+    //     setAmount(0);
+    //   }
+    // }
+  }, [cartData, memo]);
 
   const handleClickImage = () => {
     productDetail(dispatch)(product);
+    setIsShowDetail(true);
+    setIsShowProducts(false);
   };
 
   const handleEdit = () => {
-    product.choose = productChoose;
+    // product.choose = productChoose;
     editProduct(dispatch)(product);
+    setIsEditProduct(true);
+    setIsShowProducts(false);
+  };
+
+  const handleAdd = () => {
     //showProductFromDB(dispatch)();
+    setAmount(1);
+    addCart(dispatch)({
+      email: user,
+      id: id,
+      num: 1,
+    });
+    // editProduct2DB(dispatch)(product);
+    // showProductFromDB(dispatch)();
+  };
+
+  const onChange = (value) => {
+    setAmount(value);
+    if (value === 0) {
+      delCartItem(dispatch)({
+        email: user,
+        id: id,
+      });
+    } else {
+      editCart(dispatch)({
+        email: user,
+        id: id,
+        num: value,
+      });
+    }
+
+    //product.choose = value;
+    //editProduct2DB(dispatch)(product);
   };
 
   return (
-    <Col span={4} className='grid-col' key={id}>
-      <Image src={imageURL} onClick={handleClickImage} preview={false} />
+    <Col span={4} className='grid-cell' key={id} md={4} xs={20}>
+      <Image
+        src={imageURL}
+        onClick={handleClickImage}
+        preview={false}
+        className='img'
+        max-height={180}
+      />
       <div className='col-name'>{name}</div>
-      <div className='col-price'>{'$' + price}</div>
+      <div className='col-price'>${price.toFixed(2)}</div>
       <span className='col-span-container'>
-        <Input.Group>
+        {/* <Input.Group>
           <Button
             size='small'
             type='primary'
@@ -48,7 +128,7 @@ const ColItem = ({ product }) => {
             size='small'
             className='quantity-input'
             value={productChoose}
-          ></InputNumber>
+          ></InputNumber> 
           <Button
             size='small'
             type='primary'
@@ -64,9 +144,46 @@ const ColItem = ({ product }) => {
             -
           </Button>
         </Input.Group>
-        <Button size='small' className='quantity-btn' onClick={handleEdit}>
-          Edit
-        </Button>
+        */}
+        {amount === 0 ? (
+          <Button
+            style={{
+              width: '45%',
+            }}
+            size='small'
+            type='primary'
+            onClick={handleAdd}
+            // disabled={isSignedIn ? false : true}
+          >
+            Add
+          </Button>
+        ) : (
+          <InputNumber
+            style={{
+              width: '45%',
+            }}
+            size='small'
+            min={0}
+            max={quantity}
+            defaultValue={amount}
+            onChange={onChange}
+          />
+        )}
+
+        {isAdmin ? (
+          <Button
+            style={{
+              width: '45%',
+            }}
+            size='small'
+            className='quantity-btn'
+            onClick={handleEdit}
+          >
+            Edit
+          </Button>
+        ) : (
+          <></>
+        )}
       </span>
     </Col>
   );

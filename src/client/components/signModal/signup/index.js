@@ -1,11 +1,12 @@
-import { Button, Form, Input } from 'antd';
-import { useState } from 'react';
-import { signInModal } from '../../../actions/index.js';
-import { useDispatch } from 'react-redux';
+import { Button, Form, Input, message } from 'antd';
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { signUpData } from '../../../actions/index.js';
+import { status } from '../../../constants/index.js';
 import './index.css';
 
-const SignUp = () => {
+const SignUp = ({ setSignIn, setSignUp }) => {
+  const [messageApi, contextHolder] = message.useMessage();
   const dispatch = useDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -14,9 +15,23 @@ const SignUp = () => {
   const [passwordValidateType, setPasswordValidateType] = useState('onBlur');
   const [passwordFeedbackState, setPasswordFeedbackState] = useState(false);
 
+  const { type, error, msg } = useSelector((state) => state.statusOption);
+
+  useEffect(() => {
+    if (type === status.signedUp && error !== undefined) {
+      messageApi.open({
+        type: { error } ? 'error' : 'success',
+        content: msg,
+      });
+
+      if (type === status.signedUp && error === false) {
+        setSignIn(true);
+        setSignUp(false);
+      }
+    }
+  }, [msg]);
+
   const handleSubmit = () => {
-    console.log('email:', email);
-    console.log('password:', password);
     signUpData(dispatch)({
       email: email,
       password: password,
@@ -24,12 +39,14 @@ const SignUp = () => {
   };
 
   const handleSignIn = () => {
-    signInModal(dispatch)();
+    setSignIn(true);
+    setSignUp(false);
   };
 
   return (
     <div>
-      <Form layout='vertical'>
+      {contextHolder}
+      <Form layout='vertical' onFinish={handleSubmit}>
         <Form.Item
           name='email'
           validateTrigger={emailValidateType}
@@ -69,8 +86,11 @@ const SignUp = () => {
               pattern: new RegExp(
                 '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$'
               ),
-              message:
-                'Password must have at least 8 characters and contain at least one lowercase letter, uppercase letter, number, and special character',
+              message: [
+                '- Password must have at least 8 characters',
+                '- at least one lowercase letter, uppercase letter',
+                '- at least one number, and special character',
+              ],
             },
           ]}
           hasFeedback={passwordFeedbackState}
@@ -84,9 +104,11 @@ const SignUp = () => {
             }}
           />
         </Form.Item>
-        <Button type='primary' className='signUpBtn' onClick={handleSubmit}>
-          Create account
-        </Button>
+        <Form.Item>
+          <Button type='primary' className='signUpBtn' htmlType='submit'>
+            Create account
+          </Button>
+        </Form.Item>
       </Form>
       <div className='signUp-footer'>
         <span id='signUp-signUp'>

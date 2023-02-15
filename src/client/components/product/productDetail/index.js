@@ -1,18 +1,46 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { Image, Button } from 'antd';
-import { showProduct } from '../../../actions';
+import { useState } from 'react';
+import { Image, Button, InputNumber, Input } from 'antd';
+import { showProduct, editProduct2DB } from '../../../actions';
+import { editProduct } from '../../../actions';
 import './index.css';
 import { product } from '../../../constants';
 
-const ProductDetail = () => {
+const ProductDetail = ({
+  setIsShowProducts,
+  setIsEditProduct,
+  setIsShowDetail,
+  isAdmin,
+  isSignedIn,
+}) => {
   const dispatch = useDispatch();
   const productData = useSelector((state) => state.productEdit);
+  const [current, setCurrent] = useState(0);
   const handleCancel = () => {
-    showProduct(dispatch)();
+    // showProduct(dispatch)();
+    setIsShowDetail(false);
+    setIsShowProducts(true);
   };
 
-  const handleEdit = () => {};
-  const handleAddtoCart = () => {};
+  const handleEdit = () => {
+    editProduct(dispatch)(productData);
+    // setIsShowDetail(false);
+    setIsEditProduct(true);
+  };
+
+  const handleAdd = () => {
+    // productData.choose += 1;
+    setCurrent(current + 1);
+    editProduct2DB(dispatch)(productData);
+    //setProductChoose(productChoose + 1);
+  };
+
+  const onChange = (event) => {
+    //productData.choose = value;
+    setCurrent(event.target.value);
+    // productData.choose = event.target.value;
+    editProduct2DB(dispatch)(productData);
+  };
 
   return (
     <div>
@@ -21,7 +49,11 @@ const ProductDetail = () => {
       </div>
       <div className='detail-container'>
         <div>
-          <Image width={600} src={productData.imageURL} />
+          <Image
+            className='detail-img'
+            width={'90%'}
+            src={productData.imageURL}
+          />
         </div>
         <div className='detail-content'>
           <p>{productData.category}</p>
@@ -29,16 +61,46 @@ const ProductDetail = () => {
           <h2>${productData.price}</h2>
           <p>{productData.description}</p>
           <div className='detail-btns'>
-            <Button onClick={handleAddtoCart} type='primary'>
+            {/* <Button onClick={handleAddtoCart} type='primary'>
               {' '}
               Add to Cart
-            </Button>
-            <Button onClick={handleEdit} id='edit-btn'>
-              {' '}
-              Edit Product
+            </Button> */}
+
+            <Input
+              style={{
+                width: '20%',
+              }}
+              prefix='Qty.'
+              defaultValue={0}
+              onChange={onChange}
+              id='addInput'
+              value={current}
+            />
+            <Button
+              // style={{
+              //   width: '45%',
+              // }}
+              type='primary'
+              onClick={handleAdd}
+              id='addBtn'
+              disabled={isSignedIn ? false : true}
+            >
+              Add to cart
             </Button>
 
-            <Button onClick={handleCancel}> Back</Button>
+            {isAdmin ? (
+              <Button onClick={handleEdit} id='edit-btn'>
+                {' '}
+                Edit Product
+              </Button>
+            ) : (
+              <></>
+            )}
+
+            <Button onClick={handleCancel} id='backBtn'>
+              {' '}
+              Back
+            </Button>
           </div>
         </div>
       </div>

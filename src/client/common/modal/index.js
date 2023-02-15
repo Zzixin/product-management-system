@@ -3,26 +3,17 @@ import { Modal } from 'antd';
 import { useDispatch } from 'react-redux';
 import './index.css';
 import { useSelector } from 'react-redux';
-import { signOutClose } from '../../actions/index.js';
 
-const MyModal = ({ title, show, children }) => {
-  const [isVisible, setIsVisible] = useState(show);
-  const type = useSelector((state) => state.modalSwitch);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    setIsVisible(true);
-  }, [type]);
-
+const MyModal = ({ title, isModalPop, setIsModalPop, setSignIn, children }) => {
   return (
     <>
       <Modal
         title={<div className='modal-title'>{title}</div>}
         centered
-        open={isVisible}
+        open={isModalPop}
         onCancel={() => {
-          setIsVisible(false);
-          signOutClose(dispatch)();
+          setIsModalPop(false);
+          setSignIn(true);
         }}
         footer={null}
         width={450}

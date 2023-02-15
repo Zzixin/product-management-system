@@ -3,59 +3,49 @@
 2. open sign up
 3. open forget password
 */
-import { signModal, status, product } from '../constants/index.js';
+import { status, product } from '../constants/index.js';
 import { ajaxConfigHelper } from '../helper/index';
 
-// modal
-export const signOutClose =
-  (dispatch) =>
-  (choice = '') => {
-    dispatch({
-      type: status.signedOut,
-      payload: choice,
-    });
-  };
+export const memoCookie = (dispatch) => (content) => {
+  dispatch({
+    type: 'doSomeMemo',
+    payload: content,
+  });
+};
 
-export const signInModal =
-  (dispatch) =>
-  (choice = '') => {
-    dispatch({
-      type: signModal.signIn,
-      payload: choice,
-    });
-  };
+export const signInSuccess = (dispatch) => () => {
+  dispatch({
+    type: 'SignInSuccess',
+    payload: null,
+  });
+};
 
-export const signUpModal =
-  (dispatch) =>
-  (choice = '') => {
-    dispatch({
-      type: signModal.signUp,
-      payload: choice,
-    });
-  };
-
-export const passwordModal =
-  (dispatch) =>
-  (email = '') => {
-    dispatch({
-      type: signModal.forgetPassword,
-      payload: email,
-    });
-  };
+export const signOutSuccess = (dispatch) => () => {
+  dispatch({
+    type: 'SignOutSuccess',
+    payload: null,
+  });
+};
 
 // data transfer
 export const signUpData = (dispatch) => async (data) => {
   try {
     const response = await fetch('/signUp', ajaxConfigHelper(data));
-
     const result = await response.json();
     dispatch({
       type: status.signedUp,
-      payload: result.status,
+      payload: result,
     });
   } catch (error) {
     console.log(error);
   }
+};
+
+export const signInDefault = (dispatch) => () => {
+  dispatch({
+    type: 'default',
+    payload: null,
+  });
 };
 
 export const signInData = (dispatch) => async (data) => {
@@ -64,8 +54,25 @@ export const signInData = (dispatch) => async (data) => {
     const result = await response.json();
     dispatch({
       type: status.signedIn,
-      payload: result.status,
+      payload: result,
     });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const isEmailExist = (dispatch) => async (email) => {
+  try {
+    const response = await fetch(
+      '/isEmailExist',
+      ajaxConfigHelper({ user: email })
+    );
+    const result = await response.json();
+    // dispatch({
+    //   type: status.signedUp,
+    //   payload: result,
+    // });
+    return result.existed;
   } catch (error) {
     console.log(error);
   }
@@ -85,12 +92,12 @@ export const modifyPassword = (dispatch) => async (data) => {
 };
 
 // product page
-export const createProduct = (dispatch) => () => {
-  dispatch({
-    type: product.createProduct,
-    payload: null,
-  });
-};
+// export const createProduct = (dispatch) => () => {
+//   dispatch({
+//     type: product.createProduct,
+//     payload: null,
+//   });
+// };
 
 export const editProduct = (dispatch) => (productInfo) => {
   dispatch({
@@ -99,12 +106,12 @@ export const editProduct = (dispatch) => (productInfo) => {
   });
 };
 
-export const showProduct = (dispatch) => () => {
-  dispatch({
-    type: product.showProducts,
-    payload: {},
-  });
-};
+// export const showProduct = (dispatch) => () => {
+//   dispatch({
+//     type: product.showProducts,
+//     payload: {},
+//   });
+// };
 
 export const productDetail = (dispatch) => (productInfo) => {
   dispatch({
@@ -123,15 +130,9 @@ export const showProductFromDB = (dispatch) => () => {
         payload: data,
       })
     )
-    .catch((error) =>
-      // dispatch({
-      //   type: ERROR,
-      //   payload: { error: true, message: 'init todos failed' },
-      // })
-      {
-        console.log(error);
-      }
-    );
+    .catch((error) => {
+      console.log(error);
+    });
 };
 
 export const addProduct2DB = (dispatch) => async (data) => {
@@ -142,6 +143,7 @@ export const addProduct2DB = (dispatch) => async (data) => {
       type: product.addProduct2DB,
       payload: result.status,
     });
+    return result.status;
   } catch (error) {
     console.log(error);
   }
@@ -154,6 +156,92 @@ export const editProduct2DB = (dispatch) => async (data) => {
     dispatch({
       type: product.editProduct2DB,
       payload: result.status,
+    });
+    return result.status;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// things about cart
+export const addCart = (dispatch) => async (content) => {
+  try {
+    const response = await fetch(
+      '/addToCart',
+      ajaxConfigHelper(content, 'PUT')
+    );
+    const result = await response.json();
+    dispatch({
+      type: 'addToCart',
+      payload: result,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const editCart = (dispatch) => async (content) => {
+  try {
+    const response = await fetch(
+      '/editToCart',
+      ajaxConfigHelper(content, 'PUT')
+    );
+    const result = await response.json();
+    dispatch({
+      type: 'editToCart',
+      payload: result,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const delCartItem = (dispatch) => async (content) => {
+  try {
+    await fetch('/delToCart', ajaxConfigHelper(content, 'PUT'));
+    dispatch({
+      type: 'delToCart',
+      payload: {
+        id: content.id,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getCart = (dispatch) => async (user) => {
+  try {
+    const response = await fetch(
+      '/getCartInfo',
+      ajaxConfigHelper({ email: user })
+    );
+    const result = await response.json();
+    dispatch({
+      type: 'getCartInfo',
+      payload: result,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const searchItem = (dispatch) => async (pName) => {
+  try {
+    if (pName === -1) {
+      dispatch({
+        type: 'NotsearchItem',
+        payload: null,
+      });
+      return;
+    }
+    const response = await fetch(
+      '/searchProduct',
+      ajaxConfigHelper({ name: pName })
+    );
+    const result = await response.json();
+    dispatch({
+      type: 'searchItem',
+      payload: result,
     });
   } catch (error) {
     console.log(error);

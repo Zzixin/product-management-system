@@ -1,72 +1,74 @@
-import { Button, Form, Input } from 'antd';
+import { Button, Form, Input, message } from 'antd';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { modifyPassword } from '../../../actions/index.js';
+import { isEmailExist } from '../../../actions';
 import './index.css';
 
-const ForgetPassword = (email) => {
-  const [password, setPassword] = useState('');
-  const [passwordConfirm, setPasswordConfirm] = useState('');
+const ForgetPassword = ({
+  setEditPassword,
+  setEmailToUpdate,
+  setConfirmPassword,
+}) => {
+  const [email, setEmail] = useState('');
+  const [emailValidateType, setEmailValidateType] = useState('onBlur');
+  const [emailFeedbackState, setEmailFeedbackState] = useState(false);
   const dispatch = useDispatch();
+  const [messageApi, contextHolder] = message.useMessage();
 
-  const handleSubmit = () => {
-    modifyPassword(dispatch)({
-      email: email.email,
-      password: password,
-    });
+  const handleSubmit = async () => {
+    const existed = await isEmailExist(dispatch)(email);
+    console.log(existed);
+    if (existed) {
+      setEditPassword(false);
+      setEmailToUpdate(email);
+      setConfirmPassword(true);
+    } else {
+      messageApi.open({
+        // key: 'signUp',
+        type: 'error',
+        content: 'email does not exist',
+      });
+      setEmailValidateType('onBlur');
+    }
   };
 
   return (
     <div>
-      <Form layout='vertical' className='password-modal'>
+      {contextHolder}
+      <p id='instruction'>
+        {/* Enter your email link, we will send you the recovery link */}
+      </p>
+      <Form
+        layout='vertical'
+        className='password-modal'
+        onFinish={handleSubmit}
+      >
         <Form.Item
-          name='password'
-          label='New Password'
+          name='email'
+          label='Email'
+          validateTrigger={emailValidateType}
           rules={[
+            {
+              type: 'email',
+              message: 'Please input a valid email address',
+            },
             {
               required: true,
               message: 'Please input your password!',
             },
-            {
-              pattern: new RegExp(
-                '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$'
-              ),
-              message:
-                'Password must have at least 8 characters and contain at least one lowercase letter, uppercase letter, number, and special character',
-            },
           ]}
-          hasFeedback
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
+          hasFeedback={emailFeedbackState}
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
         >
-          <Input.Password />
+          <Input
+            onBlur={() => {
+              setEmailValidateType('onChange');
+              setEmailFeedbackState(true);
+            }}
+          />
         </Form.Item>
-        <Form.Item
-          name='passwordConfirm'
-          label='Confirm Password'
-          rules={[
-            {
-              required: true,
-              message: 'Please confirm your password!',
-            },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (!value || getFieldValue('password') === value) {
-                  return Promise.resolve();
-                }
-                return Promise.reject(
-                  new Error('The two passwords that you entered do not match!')
-                );
-              },
-            }),
-          ]}
-          hasFeedback
-          value={passwordConfirm}
-          onChange={(event) => setPasswordConfirm(event.target.value)}
-        >
-          <Input.Password />
-        </Form.Item>
-        <Button type='primary' className='passwordBtn' onClick={handleSubmit}>
+        <Button type='primary' className='passwordBtn' htmlType='submit'>
           Update Password
         </Button>
       </Form>

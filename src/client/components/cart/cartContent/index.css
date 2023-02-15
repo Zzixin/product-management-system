@@ -1,0 +1,72 @@
+#header-divider {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+#coupon-label {
+  margin-top: 20px;
+  margin-bottom: 5px;
+}
+.coupon-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.subtotal-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.subtotal-labels {
+  padding-bottom: 3px;
+}
+.subtotal-number {
+  margin-bottom: 3px;
+  margin-right: 30px;
+}
+
+#checkout-btn {
+  margin-top: 5px;
+  width: 100%;
+}
+
+/* cart-cell */
+.cart-cell-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.cart-pImg {
+  margin-top: 5px;
+  margin-right: 24px;
+}
+
+.cart-part1 {
+  width: 175px;
+  /* margin-top: 10px; */
+  display: flex;
+  flex-direction: column;
+  margin-left: 30px;
+  justify-content: space-around;
+  /* justify-content: flex-start; */
+}
+.cart-pName {
+  font-weight: bold;
+}
+.cart-pNum {
+}
+
+.cart-part2 {
+  /* margin-top: 10px; */
+  width: 70px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+.cart-pPrice {
+  font-weight: bold;
+}
+.remove-btn {
+}

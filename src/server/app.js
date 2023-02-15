@@ -28,6 +28,20 @@ app.use(express.static(path.join(__dirname, 'public')));
 // app.use('/', indexRouter);
 // app.use('/users', usersRouter);
 
+//Search
+app.post('/searchProduct', async (req, res) => {
+  if (req.body) {
+    const name = req.body.name;
+    const queryResult = await Product.find({ name: { $regex: name } });
+    if (queryResult) {
+      res.status(200).json(queryResult);
+    }
+    return;
+  }
+
+  res.status('401').json({});
+});
+
 // 1. sign in find data
 app.post('/signIn', async (req, res) => {
   if (req.body) {
@@ -35,23 +49,27 @@ app.post('/signIn', async (req, res) => {
     const password = req.body.password;
     const queryResult = await User.findOne({ email: email });
     if (queryResult && queryResult.password === password) {
-      res.status('200').json({
+      res.status(200).json({
         status: 200,
-        message: 'Sign In Successfully',
+        message: 'Sign In Successfully!',
       });
-      return;
+    } else if (!queryResult) {
+      res.status(404).json({
+        error: 'User Not Found',
+        message: 'User Not Found. Please sign up.',
+      });
+    } else {
+      res.status(401).json({
+        error: 'Unauthorized',
+        message: 'Password is false. Please reenter.',
+      });
     }
-
-    res.status('400').json({
-      error: 'Bad Request',
-      message: 'Sign Up failed',
-    });
+    return;
   }
 
-  //error handling
-  res.status(404).json({
-    error: 'User Not Found',
-    message: 'Sign Ip failed',
+  res.status('401').json({
+    error: 'Bad Request',
+    message: 'Sign Up failed',
   });
 });
 
@@ -62,32 +80,54 @@ app.post('/signUp', async (req, res) => {
       email: req.body.email,
       password: req.body.password,
       id: uuidv4(),
+      cart: [],
     });
+
+    const queryResult = await User.findOne({ email: req.body.email });
+    if (queryResult) {
+      res.status(406).json({
+        error: 'Not Acceptable',
+        message: 'You have already signed up. Please sign in.',
+      });
+      return;
+    }
 
     const newData = await data.save();
     if (newData === data) {
       res.status('200').json({
         message: 'Sign Up Successfully',
         status: 200,
-        newData: {
-          email: newData.email,
-          password: newData.password,
-          id: newData.id,
-        },
+        // newData: {
+        //   email: newData.email,
+        //   password: newData.password,
+        //   id: newData.id,
+        // },
       });
       return;
     }
-
-    res.status('400').json({
-      error: 'Bad Request',
-      message: 'Sign Up failed',
-    });
   }
 
   //error handling
-  res.status(404).json({
-    error: 'User Not Found',
+  res.status('400').json({
+    error: 'Bad Request',
     message: 'Sign Up failed',
+  });
+});
+
+app.post('/isEmailExist', async (req, res) => {
+  if (req.body) {
+    const queryResult = await User.findOne({ email: req.body.user });
+    if (queryResult) {
+      res.status(200).json({
+        existed: true,
+      });
+      return;
+    }
+  }
+
+  //error handling
+  res.status('400').json({
+    existed: false,
   });
 });
 
@@ -102,8 +142,8 @@ app.put('/changePass', async (req, res) => {
 
     if (modifiedCount) {
       res.status('200').json({
-        status: 200,
         message: 'Change Password Successfully',
+        status: 200,
       });
       return;
     }
@@ -127,22 +167,12 @@ app.put('/changePass', async (req, res) => {
 app.get('/allProducts', async (_, res) => {
   const productDataBase = await Product.find({});
   const productList = productDataBase.map(
-    ({
-      name,
-      description,
-      category,
-      price,
-      choose,
-      quantity,
-      imageURL,
-      id,
-    }) => {
+    ({ name, description, category, price, quantity, imageURL, id }) => {
       return {
         name,
         description,
         category,
         price,
-        choose,
         quantity,
         imageURL,
         id,
@@ -159,7 +189,6 @@ app.post('/addProduct', async (req, res) => {
       description: req.body.description,
       category: req.body.category,
       price: req.body.price,
-      choose: req.body.choose,
       quantity: req.body.quantity,
       imageURL: req.body.imageURL,
       id: uuidv4(),
@@ -197,7 +226,6 @@ app.put('/editProduct', async (req, res) => {
       description: req.body.description,
       category: req.body.category,
       price: req.body.price,
-      choose: req.body.choose,
       quantity: req.body.quantity,
       imageURL: req.body.imageURL,
     });
@@ -221,6 +249,115 @@ app.put('/editProduct', async (req, res) => {
   res.status('404').json({
     error: 'Product Not Found',
     message: 'Edit Product Failed',
+  });
+});
+
+// cart events
+app.post('/getCartInfo', async (req, res) => {
+  if (req.body) {
+    const email = req.body.email;
+    const queryResult = await User.findOne({ email: email });
+    if (queryResult) {
+      res.status(200).json(queryResult.cart);
+    } else {
+      res.status(401).json({
+        error: 'Not Found',
+        message: 'Cart Not Found',
+      });
+    }
+    return;
+  }
+
+  res.status(400).json({
+    error: 'Bad Request',
+    message: 'Bad Request',
+  });
+});
+
+// add to cart
+app.put('/addToCart', async (req, res) => {
+  if (req.body) {
+    const queryResult = await User.findOne({ email: req.body.email });
+    const { modifiedCount } = await queryResult.updateOne({
+      $push: { cart: { id: req.body.id, num: req.body.num } },
+    });
+
+    if (modifiedCount) {
+      res.status(200).json({
+        id: req.body.id,
+        num: req.body.num,
+      });
+      return;
+    }
+
+    res.status('400').json({
+      error: 'Bad Request',
+      message: 'add to cart fail',
+    });
+    return;
+  }
+  res.status('400').json({
+    error: 'Bad Request',
+    message: 'add to cart fail',
+  });
+});
+
+// edit to cart, edit the quantity
+app.put('/editToCart', async (req, res) => {
+  if (req.body) {
+    const pid = req.body.id;
+    const queryResult = await User.findOne({ email: req.body.email });
+
+    const { modifiedCount } = await User.updateOne(
+      { email: req.body.email, 'cart.id': pid },
+      { $set: { 'cart.$.num': req.body.num } }
+    );
+
+    if (modifiedCount) {
+      res.status(200).json({
+        id: pid,
+        num: req.body.num,
+      });
+      return;
+    }
+
+    res.status('400').json({
+      error: 'Bad Request',
+      message: 'edit to cart fail',
+    });
+    return;
+  }
+  res.status('400').json({
+    error: 'Bad Request',
+    message: 'edit to cart fail',
+  });
+});
+
+// delete cart item
+app.put('/delToCart', async (req, res) => {
+  if (req.body) {
+    const pid = req.body.id;
+    const queryResult = await User.findOne({ email: req.body.email });
+    const { modifiedCount } = await queryResult.updateOne({
+      $pull: { cart: { id: pid } },
+    });
+
+    if (modifiedCount) {
+      res.status(200).json({
+        id: pid,
+      });
+      return;
+    }
+
+    res.status('400').json({
+      error: 'Bad Request',
+      message: 'delete cart item fail',
+    });
+    return;
+  }
+  res.status('400').json({
+    error: 'Bad Request',
+    message: 'delete cart item fail',
   });
 });
 
