@@ -2,11 +2,18 @@ import { Layout, Input, Avatar, Badge } from 'antd';
 import { ShoppingCartOutlined, UserOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useState, useEffect, useRef } from 'react';
-import { signOutSuccess, memoCookie } from '../../actions/index.js';
+import { signOutSuccess, memoCookie, signOut } from '../../actions/index.js';
 import { status } from '../../constants/index.js';
 import SignModal from '../../components/signModal/index.js';
 
-const HeaderSignOut = ({ setIsSignedIn, setAdmin, setUser, setCartOn }) => {
+const HeaderSignOut = ({
+  isSignedIn,
+  setIsSignedIn,
+  setAdmin,
+  setUser,
+  setCartOn,
+  setIsModalPop,
+}) => {
   const dispatch = useDispatch();
   const [cnt, setCnt] = useState(0);
   const [money, setMoney] = useState(0);
@@ -36,14 +43,19 @@ const HeaderSignOut = ({ setIsSignedIn, setAdmin, setUser, setCartOn }) => {
     );
   }, [cartData]);
 
-  function handleOnClick() {
-    // sessionStorage.clear();
+  const handleOnClick = () => {
+    if (!isSignedIn) {
+      setIsModalPop(true);
+      return;
+    }
+    localStorage.clear();
     setIsSignedIn(false);
     setAdmin(false);
     setUser('');
     memoCookie(dispatch)({ user: '', isSignedIn: false });
+    signOut(dispatch)();
     //setTimeout(100);
-  }
+  };
 
   const handleOnCart = () => {
     setCartOn(true);
@@ -52,11 +64,12 @@ const HeaderSignOut = ({ setIsSignedIn, setAdmin, setUser, setCartOn }) => {
   return (
     <>
       <a href='#default' className='headerSignIn' onClick={handleOnClick}>
-        <UserOutlined
-          id='signout-icon'
-          style={{ fontSize: '20px', paddingRight: '5px' }}
-        />
-        <span>{memo.user.split('@')[0]}</span>
+        <UserOutlined style={{ fontSize: '20px', paddingRight: '5px' }} />
+        {isSignedIn ? (
+          <span id='signout-icon'>{memo.user.split('@')[0]}</span>
+        ) : (
+          <span id='signIn-text'>Sign In</span>
+        )}
       </a>
 
       <a href='#default' className='headerCart' onClick={handleOnCart}>

@@ -27,6 +27,20 @@ export const signOutSuccess = (dispatch) => () => {
   });
 };
 
+export const getUser = (dispatch) => async () => {
+  try {
+    const response = await fetch('/getUser');
+    const result = await response.json();
+    // if (response.ok) {
+    //   return result;
+    // }
+    //dispatch({});
+    return result;
+  } catch (error) {
+    console.log('get user: ', error);
+  }
+};
+
 // data transfer
 export const signUpData = (dispatch) => async (data) => {
   try {
@@ -59,6 +73,14 @@ export const signInData = (dispatch) => async (data) => {
   } catch (error) {
     console.log(error);
   }
+};
+
+export const signOut = (dispatch) => async () => {
+  try {
+    const response = await fetch('/signOut', ajaxConfigHelper());
+    const result = await response.json();
+    dispatch({});
+  } catch (error) {}
 };
 
 export const isEmailExist = (dispatch) => async (email) => {

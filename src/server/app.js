@@ -15,6 +15,11 @@ connectToMongoose();
 
 var app = express();
 
+// jwt
+const jwt = require('jsonwebtoken');
+const { json } = require('express');
+const { createToken, validateToken } = require('./JWT');
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -27,6 +32,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // app.use('/', indexRouter);
 // app.use('/users', usersRouter);
+let userOn;
+
+// get User
+app.get('/getUser', validateToken, (req, res) => {
+  // return user data
+  userOn = req.id;
+  if (userOn === undefined) {
+    res.status(400).json({ error: 'validation failed' });
+  } else {
+    res.json({ email: req.email, id: userOn });
+  }
+});
 
 //Search
 app.post('/searchProduct', async (req, res) => {
@@ -49,6 +66,20 @@ app.post('/signIn', async (req, res) => {
     const password = req.body.password;
     const queryResult = await User.findOne({ email: email });
     if (queryResult && queryResult.password === password) {
+      userOn = queryResult.id;
+      const accessToken = createToken(queryResult);
+      res.cookie('access-token', accessToken, {
+        maxAge: 60 * 60 * 24 * 30 * 1000, //30days
+        httpOnly: true,
+      });
+      res.cookie(
+        'guest-cart',
+        {},
+        {
+          maxAge: 60 * 60 * 10 * 1000, //10days
+          httpOnly: true,
+        }
+      );
       res.status(200).json({
         status: 200,
         message: 'Sign In Successfully!',
@@ -73,7 +104,7 @@ app.post('/signIn', async (req, res) => {
   });
 });
 
-// add data
+//  sign up
 app.post('/signUp', async (req, res) => {
   if (req.body) {
     const data = new User({
@@ -106,7 +137,6 @@ app.post('/signUp', async (req, res) => {
       return;
     }
   }
-
   //error handling
   res.status('400').json({
     error: 'Bad Request',
@@ -131,7 +161,7 @@ app.post('/isEmailExist', async (req, res) => {
   });
 });
 
-// PUT, modify data
+// PUT, change password
 app.put('/changePass', async (req, res) => {
   if (req.body) {
     const email = req.body.email;
@@ -160,6 +190,16 @@ app.put('/changePass', async (req, res) => {
     error: 'User Not Found',
     message: 'Change Password Failed',
   });
+});
+
+// sign out
+app.post('/signOut', async (_, res) => {
+  userOn = undefined;
+  res.cookie('access-token', 'none', {
+    maxAge: 60 * 60 * 24 * 30 * 1000, //30days
+    httpOnly: true,
+  });
+  res.json({ message: 'logout successfully' });
 });
 
 // product events

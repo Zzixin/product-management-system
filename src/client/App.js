@@ -7,15 +7,19 @@ import { useEffect, useState } from 'react';
 import ErrorPage from './components/errorPage';
 import SignModal from './components/signModal';
 import './index.css';
-import { memoCookie, getCart } from './actions';
+import { memoCookie, getCart, getUser } from './actions';
 import { useDispatch } from 'react-redux';
 import CartModal from './components/cart/index.js';
+import { CodepenOutlined } from '@ant-design/icons';
 
 function App() {
-  const [isSignedIn, setIsSignedIn] = useState(false); // if user is signed in
+  let tmpUser = localStorage.getItem('user');
+  const [isSignedIn, setIsSignedIn] = useState(tmpUser !== null); // if user is signed in
   const [isModalPop, setIsModalPop] = useState(false);
-  const [user, setUser] = useState('');
-  const [isAdmin, setAdmin] = useState(false);
+  const [user, setUser] = useState(tmpUser === null ? '' : tmpUser);
+  const [isAdmin, setAdmin] = useState(
+    tmpUser === null ? false : tmpUser === 'admin'
+  );
   const [isCartOn, setCartOn] = useState(false);
   const [isSearch, setIsSearch] = useState(false);
   const dispatch = useDispatch();
@@ -29,7 +33,7 @@ function App() {
   //       setAdmin(true);
   //     }
   //     getCart(dispatch)(memo);
-  //     memoCookie(dispatch)({ user: memo, isSignedIn: true });
+  //
   //   } else {
   //     if (sessionStorage.getItem('cart') === null) {
   //       sessionStorage.setItem(
@@ -45,6 +49,37 @@ function App() {
   // cookie
   // token jwt, 后端来解密
   // localstorage 未登录的购物车加入localstorage
+
+  // const onRefresh = React.useCallback(() => {
+  //   setRefreshing(true);
+  //   setTimeout(() => {
+  //     setRefreshing(false);
+  //   }, 2000);
+  // }, []);
+
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      try {
+        const response = await getUser(dispatch)();
+        if (response.id) {
+          localStorage.setItem('user', response.email.split('@')[0]);
+          setIsSignedIn(true);
+          setUser(response.email);
+          memoCookie(dispatch)({ user: response.email, isSignedIn: true });
+        } else {
+          setIsSignedIn(false);
+          console.log('getFailed');
+        }
+        if (response.email === 'admin@gmail.com') {
+          setAdmin(true);
+        } else {
+          setAdmin(false);
+        }
+      } catch (error) {}
+    };
+
+    getCurrentUser();
+  }, []);
 
   return (
     <div className='APP'>

@@ -49,8 +49,9 @@ const MyHeader = ({
           size='large'
         />
       </span>
-      {isSignedIn ? (
+      {/* {isSignedIn ? (
         <HeaderSignOut
+          isSignedIn={isSignedIn}
           setIsSignedIn={setIsSignedIn}
           setAdmin={setAdmin}
           setUser={setUser}
@@ -64,7 +65,15 @@ const MyHeader = ({
           setUser={setUser}
           setCartOn={setCartOn}
         />
-      )}
+      )} */}
+      <HeaderSignOut
+        isSignedIn={isSignedIn}
+        setIsSignedIn={setIsSignedIn}
+        setAdmin={setAdmin}
+        setUser={setUser}
+        setCartOn={setCartOn}
+        setIsModalPop={setIsModalPop}
+      />
     </header>
   );
 };
