@@ -2,7 +2,6 @@ import { Layout, Input, Avatar, Badge } from 'antd';
 import { ShoppingCartOutlined, UserOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useState, useEffect, useRef } from 'react';
-import HeaderSignIn from './headerSignIn.js';
 import HeaderSignOut from './headerSignOut.js';
 import { signOutSuccess } from '../../actions/index.js';
 import { status } from '../../constants/index.js';
@@ -49,23 +48,7 @@ const MyHeader = ({
           size='large'
         />
       </span>
-      {/* {isSignedIn ? (
-        <HeaderSignOut
-          isSignedIn={isSignedIn}
-          setIsSignedIn={setIsSignedIn}
-          setAdmin={setAdmin}
-          setUser={setUser}
-          setCartOn={setCartOn}
-        />
-      ) : (
-        <HeaderSignIn
-          isSignedIn={isSignedIn}
-          setIsSignedIn={setIsSignedIn}
-          setIsModalPop={setIsModalPop}
-          setUser={setUser}
-          setCartOn={setCartOn}
-        />
-      )} */}
+
       <HeaderSignOut
         isSignedIn={isSignedIn}
         setIsSignedIn={setIsSignedIn}

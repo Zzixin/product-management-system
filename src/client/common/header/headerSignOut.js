@@ -2,7 +2,12 @@ import { Layout, Input, Avatar, Badge } from 'antd';
 import { ShoppingCartOutlined, UserOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useState, useEffect, useRef } from 'react';
-import { signOutSuccess, memoCookie, signOut } from '../../actions/index.js';
+import {
+  signOutSuccess,
+  memoCookie,
+  signOut,
+  getCart,
+} from '../../actions/index.js';
 import { status } from '../../constants/index.js';
 import SignModal from '../../components/signModal/index.js';
 
@@ -46,15 +51,17 @@ const HeaderSignOut = ({
   const handleOnClick = () => {
     if (!isSignedIn) {
       setIsModalPop(true);
-      return;
+    } else {
+      setIsModalPop(false);
+      localStorage.clear();
+      setIsSignedIn(false);
+      setAdmin(false);
+      setUser('');
+      memoCookie(dispatch)({ user: '', isSignedIn: false });
+      signOut(dispatch)();
+      getCart(dispatch)('');
+      //setTimeout(100);
     }
-    localStorage.clear();
-    setIsSignedIn(false);
-    setAdmin(false);
-    setUser('');
-    memoCookie(dispatch)({ user: '', isSignedIn: false });
-    signOut(dispatch)();
-    //setTimeout(100);
   };
 
   const handleOnCart = () => {

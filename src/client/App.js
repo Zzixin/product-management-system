@@ -57,29 +57,35 @@ function App() {
   //   }, 2000);
   // }, []);
 
-  useEffect(() => {
-    const getCurrentUser = async () => {
-      try {
-        const response = await getUser(dispatch)();
-        if (response.id) {
-          localStorage.setItem('user', response.email.split('@')[0]);
-          setIsSignedIn(true);
-          setUser(response.email);
-          memoCookie(dispatch)({ user: response.email, isSignedIn: true });
-        } else {
-          setIsSignedIn(false);
-          console.log('getFailed');
-        }
-        if (response.email === 'admin@gmail.com') {
-          setAdmin(true);
-        } else {
-          setAdmin(false);
-        }
-      } catch (error) {}
-    };
+  const getCurrentUser = async () => {
+    try {
+      const response = await getUser(dispatch)();
+      if (response.id) {
+        localStorage.setItem('user', response.email.split('@')[0]);
+        setIsSignedIn(true);
+        setUser(response.email);
+        memoCookie(dispatch)({ user: response.email, isSignedIn: true });
+      } else {
+        setIsSignedIn(false);
+      }
+      if (response.email === 'admin@gmail.com') {
+        setAdmin(true);
+      } else {
+        setAdmin(false);
+      }
+    } catch (error) {}
+  };
 
+  useEffect(() => {
     getCurrentUser();
+    getCart(dispatch)(user);
   }, []);
+
+  // useEffect(() => {
+  //   if (memo.user) {
+  //     getCart(dispatch)(memo.user);
+  //   }
+  // }, [memo]);
 
   return (
     <div className='APP'>

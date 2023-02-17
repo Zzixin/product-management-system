@@ -35,6 +35,23 @@ const CartCell = ({
     }
   };
 
+  const handleMinusPlus = (op) => {
+    let value = op === '-' ? amount - 1 : amount + 1;
+    setAmount(value);
+    if (value === 0) {
+      delCartItem(dispatch)({
+        email: memo.user,
+        id: pid,
+      });
+    } else {
+      editCart(dispatch)({
+        email: memo.user,
+        id: pid,
+        num: value,
+      });
+    }
+  };
+
   const handleRemove = () => {
     delCartItem(dispatch)({
       email: memo.user,
@@ -47,7 +64,7 @@ const CartCell = ({
       <Image className='cart-pImg' width={112} src={pImg} preview={false} />
       <div className='cart-part1'>
         <p className='cart-pName'>{pName}</p>
-        <InputNumber
+        {/* <InputNumber
           style={{
             width: '35%',
           }}
@@ -57,7 +74,23 @@ const CartCell = ({
           defaultValue={amount}
           onChange={handleChange}
           className='cart-pNum'
-        />
+        /> */}
+        <div className='edit-btns'>
+          <button
+            className='add-minus-btn'
+            onClick={() => handleMinusPlus('-')}
+          >
+            -
+          </button>
+          <span className='quantity-text'>{amount}</span>
+          <button
+            className='add-minus-btn'
+            disabled={amount < pQuantity ? false : true}
+            onClick={() => handleMinusPlus('+')}
+          >
+            +
+          </button>
+        </div>
       </div>
       <div className='cart-part2'>
         <p className='cart-pPrice'>${pPrice.toFixed(2)}</p>

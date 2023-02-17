@@ -54,6 +54,7 @@ export const statusReducer = (
       if (payload.status === 200) {
         return { type: status.signedUp, error: false, msg: payload.message };
       } else {
+        return { type: status.signedUp, error: true, msg: payload.message };
       }
     case status.changedPassword:
       if (payload === 200) {

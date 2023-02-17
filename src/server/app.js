@@ -39,9 +39,9 @@ app.get('/getUser', validateToken, (req, res) => {
   // return user data
   userOn = req.id;
   if (userOn === undefined) {
-    res.status(400).json({ error: 'validation failed' });
+    res.json({ id: false });
   } else {
-    res.json({ email: req.email, id: userOn });
+    res.status(200).json({ email: req.email, id: userOn });
   }
 });
 
@@ -72,14 +72,10 @@ app.post('/signIn', async (req, res) => {
         maxAge: 60 * 60 * 24 * 30 * 1000, //30days
         httpOnly: true,
       });
-      res.cookie(
-        'guest-cart',
-        {},
-        {
-          maxAge: 60 * 60 * 10 * 1000, //10days
-          httpOnly: true,
-        }
-      );
+      res.cookie('guest-cart', [], {
+        maxAge: 60 * 60 * 10 * 1000, //10days
+        httpOnly: true,
+      });
       res.status(200).json({
         status: 200,
         message: 'Sign In Successfully!',
@@ -111,7 +107,7 @@ app.post('/signUp', async (req, res) => {
       email: req.body.email,
       password: req.body.password,
       id: uuidv4(),
-      cart: [],
+      cart: req.cookies['guest-cart'],
     });
 
     const queryResult = await User.findOne({ email: req.body.email });
@@ -197,6 +193,10 @@ app.post('/signOut', async (_, res) => {
   userOn = undefined;
   res.cookie('access-token', 'none', {
     maxAge: 60 * 60 * 24 * 30 * 1000, //30days
+    httpOnly: true,
+  });
+  res.cookie('guest-cart', [], {
+    maxAge: 60 * 60 * 10 * 1000, //10days
     httpOnly: true,
   });
   res.json({ message: 'logout successfully' });
@@ -294,6 +294,11 @@ app.put('/editProduct', async (req, res) => {
 
 // cart events
 app.post('/getCartInfo', async (req, res) => {
+  if (userOn === undefined) {
+    let cartInfo = req.cookies['guest-cart'];
+    res.json(cartInfo);
+    return;
+  }
   if (req.body) {
     const email = req.body.email;
     const queryResult = await User.findOne({ email: email });
@@ -316,6 +321,22 @@ app.post('/getCartInfo', async (req, res) => {
 
 // add to cart
 app.put('/addToCart', async (req, res) => {
+  if (userOn === undefined) {
+    let cartInfo = req.cookies['guest-cart'];
+    if (req.body) {
+      cartInfo.push({ id: req.body.id, num: req.body.num });
+    }
+    res.cookie('guest-cart', cartInfo, {
+      maxAge: 60 * 60 * 20 * 1000, //20days
+      httpOnly: true,
+    });
+    console.log(cartInfo);
+    res.status(200).json({
+      id: req.body.id,
+      num: req.body.num,
+    });
+    return;
+  }
   if (req.body) {
     const queryResult = await User.findOne({ email: req.body.email });
     const { modifiedCount } = await queryResult.updateOne({
@@ -344,6 +365,26 @@ app.put('/addToCart', async (req, res) => {
 
 // edit to cart, edit the quantity
 app.put('/editToCart', async (req, res) => {
+  if (userOn === undefined) {
+    let cartInfo = req.cookies['guest-cart'];
+    if (req.body) {
+      cartInfo = cartInfo.map((item) => {
+        if (req.body.id !== item.id) {
+          return item;
+        }
+        return { ...item, num: req.body.num };
+      });
+    }
+    res.cookie('guest-cart', cartInfo, {
+      maxAge: 60 * 60 * 20 * 1000, //20days
+      httpOnly: true,
+    });
+    res.status(200).json({
+      id: req.body.id,
+      num: req.body.num,
+    });
+    return;
+  }
   if (req.body) {
     const pid = req.body.id;
     const queryResult = await User.findOne({ email: req.body.email });
@@ -375,6 +416,22 @@ app.put('/editToCart', async (req, res) => {
 
 // delete cart item
 app.put('/delToCart', async (req, res) => {
+  if (userOn === undefined) {
+    let cartInfo = req.cookies['guest-cart'];
+    if (req.body) {
+      cartInfo = cartInfo.filter(({ id }) => {
+        return id !== req.body.id;
+      });
+    }
+    res.cookie('guest-cart', cartInfo, {
+      maxAge: 60 * 60 * 20 * 1000, //20days
+      httpOnly: true,
+    });
+    res.status(200).json({
+      id: req.body.id,
+    });
+    return;
+  }
   if (req.body) {
     const pid = req.body.id;
     const queryResult = await User.findOne({ email: req.body.email });

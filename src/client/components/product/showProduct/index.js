@@ -47,11 +47,11 @@ const ProductDisplay = ({
     } else {
       setProductData(pData);
     }
-  }, [searchData, isSearch]);
+  }, [searchData, isSearch, pData]);
 
-  useEffect(() => {
-    setProductData(pData);
-  }, [pData]);
+  // useEffect(() => {
+  //   setProductData(pData);
+  // }, [pData]);
 
   const [numOfProduct, setNum] = useState(productData.length);
   const [gridShowPage, setGridShowPage] = useState(1);
@@ -59,15 +59,15 @@ const ProductDisplay = ({
     setNum(productData.length);
   }, [productData]);
 
-  useEffect(() => {
-    if (memo.user) {
-      getCart(dispatch)(memo.user);
-    }
-  }, [memo]);
+  // useEffect(() => {
+  //   if (memo.user) {
+  //     getCart(dispatch)(memo.user);
+  //   }
+  // }, [memo]);
 
   useEffect(() => {
     showProductFromDB(dispatch)();
-    console.log('test2');
+    // console.log('test2');
   }, [productEdit]);
 
   const handleChange = (value) => {
@@ -92,94 +92,83 @@ const ProductDisplay = ({
     setGridShowPage(value);
   };
 
-  if (productData.length === 0) {
-    if (isSearch) {
-      //return setTimeout(<></>, 2000);
-      // return <EmptyItem />;
-      return <></>;
-    } else {
-      // return <ErrorPage />;
-      return <></>;
-    }
-  } else {
-    return (
-      <div>
-        <div className='show-header'>
-          <h1 className='show-title'>Products</h1>
-          <div className='show-btns'>
-            <Select
-              defaultValue={displayOption.lastAdd}
-              style={{ width: 160 }}
-              onChange={handleChange}
-              options={[
-                {
-                  value: displayOption.lastAdd,
-                  label: displayOption.lastAdd,
-                },
-                {
-                  value: displayOption.priceL2H,
-                  label: displayOption.priceL2H,
-                },
-                {
-                  value: displayOption.priceH2L,
-                  label: displayOption.priceH2L,
-                },
-              ]}
-              disabled={isSignedIn ? false : true}
-            />
-            {isAdmin ? (
-              <Button
-                type='primary'
-                onClick={handleAddProduct}
-                style={{ marginLeft: 20 }}
-              >
-                add product
-              </Button>
-            ) : (
-              <></>
-            )}
-          </div>
-        </div>
-        <div className='grid-container'>
-          <Row
-            gutter={[16, { xs: 8, sm: 16, md: 24, lg: 24 }]}
-            justify='start'
-            className='grid-row'
-          >
-            {productData.map((item, index) => {
-              if (
-                index >= (gridShowPage - 1) * 10 &&
-                index < gridShowPage * 10
-              ) {
-                const res = cartData.find((ele) => ele.id === item.id);
-                return (
-                  <ColItem
-                    product={item}
-                    key={item.id}
-                    setIsShowProducts={setIsShowProducts}
-                    setIsEditProduct={setIsEditProduct}
-                    setIsShowDetail={setIsShowDetail}
-                    isAdmin={isAdmin}
-                    isSignedIn={isSignedIn}
-                    productNum={res ? res.num : 0}
-                    user={user}
-                  />
-                );
-              }
-            })}
-          </Row>
-        </div>
-        {/* {gridShowPage} */}
-        <Pagination
-          className='pagination'
-          defaultCurrent={1}
-          total={numOfProduct}
-          onChange={onChange}
-          size='small'
-        />
-      </div>
-    );
+  if (productData.length === 0 && isSearch) {
+    return <EmptyItem />;
   }
+  return (
+    <div>
+      <div className='show-header'>
+        <h1 className='show-title'>Products</h1>
+        <div className='show-btns'>
+          <Select
+            defaultValue={displayOption.lastAdd}
+            style={{ width: 160 }}
+            onChange={handleChange}
+            options={[
+              {
+                value: displayOption.lastAdd,
+                label: displayOption.lastAdd,
+              },
+              {
+                value: displayOption.priceL2H,
+                label: displayOption.priceL2H,
+              },
+              {
+                value: displayOption.priceH2L,
+                label: displayOption.priceH2L,
+              },
+            ]}
+            // disabled={isSignedIn ? false : true}
+          />
+          {isAdmin ? (
+            <Button
+              type='primary'
+              onClick={handleAddProduct}
+              style={{ marginLeft: 20 }}
+            >
+              add product
+            </Button>
+          ) : (
+            <></>
+          )}
+        </div>
+      </div>
+      <div className='grid-container'>
+        <Row
+          gutter={[16, { xs: 8, sm: 16, md: 24, lg: 24 }]}
+          justify='start'
+          className='grid-row'
+        >
+          {productData.map((item, index) => {
+            if (index >= (gridShowPage - 1) * 10 && index < gridShowPage * 10) {
+              const res = cartData.find((ele) => ele.id === item.id);
+              return (
+                <ColItem
+                  product={item}
+                  key={item.id}
+                  setIsShowProducts={setIsShowProducts}
+                  setIsEditProduct={setIsEditProduct}
+                  setIsShowDetail={setIsShowDetail}
+                  isAdmin={isAdmin}
+                  isSignedIn={isSignedIn}
+                  productNum={res ? res.num : 0}
+                  user={user}
+                />
+              );
+            }
+          })}
+        </Row>
+      </div>
+      {/* {gridShowPage} */}
+      <Pagination
+        className='pagination'
+        defaultCurrent={1}
+        total={numOfProduct}
+        onChange={onChange}
+        size='small'
+      />
+    </div>
+  );
 };
 
 export default ProductDisplay;

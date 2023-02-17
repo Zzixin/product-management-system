@@ -95,6 +95,23 @@ const ColItem = ({
     //editProduct2DB(dispatch)(product);
   };
 
+  const handleMinusPlus = (op) => {
+    let value = op === '-' ? amount - 1 : amount + 1;
+    setAmount(value);
+    if (value === 0) {
+      delCartItem(dispatch)({
+        email: user,
+        id: id,
+      });
+    } else {
+      editCart(dispatch)({
+        email: user,
+        id: id,
+        num: value,
+      });
+    }
+  };
+
   return (
     <Col span={4} className='grid-cell' key={id} md={4} xs={20}>
       <Image
@@ -158,16 +175,32 @@ const ColItem = ({
             Add
           </Button>
         ) : (
-          <InputNumber
-            style={{
-              width: '45%',
-            }}
-            size='small'
-            min={0}
-            max={quantity}
-            defaultValue={amount}
-            onChange={onChange}
-          />
+          // <InputNumber
+          //   style={{
+          //     width: '45%',
+          //   }}
+          //   size='small'
+          //   min={0}
+          //   max={quantity}
+          //   defaultValue={amount}
+          //   onChange={onChange}
+          // />
+          <div className='edit-btns'>
+            <button
+              className='add-minus-btn'
+              onClick={() => handleMinusPlus('-')}
+            >
+              -
+            </button>
+            <span className='quantity-text'>{amount}</span>
+            <button
+              className='add-minus-btn'
+              disabled={amount < quantity ? false : true}
+              onClick={() => handleMinusPlus('+')}
+            >
+              +
+            </button>
+          </div>
         )}
 
         {isAdmin ? (

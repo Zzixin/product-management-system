@@ -70,17 +70,37 @@
   flex-direction: row;
   justify-content: space-between;
 }
-
-.add-minus-btn {
-  margin-bottom: 0;
-  width: 25%;
-}
-.quantity-input {
-  width: 30%;
-}
-
 .quantity-btn {
   width: 50%;
+}
+
+.edit-btns {
+  display: flex;
+  justify-content: space-between;
+  width: 45%;
+  margin-top: 2px;
+  align-items: center;
+}
+
+.quantity-text {
+  font-size: 15px;
+}
+
+.add-minus-btn {
+  background-color: #1890ff;
+  border: none;
+  color: white;
+  height: 130%;
+  width: 32%;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.add-minus-btn:disabled,
+.add-minus-btn[disabled] {
+  background-color: #dcdcdc;
+  color: #666666;
+  cursor: not-allowed;
 }
 
 @media (max-width: 768px) {
@@ -115,5 +135,13 @@
 
   .pagination {
     padding-bottom: 120px;
+  }
+
+  .edit-btns {
+    margin-top: 0;
+    margin-bottom: 2px;
+  }
+  .add-minus-btn {
+    height: 120%;
   }
 }
