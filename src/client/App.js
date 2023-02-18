@@ -4,13 +4,14 @@ import MyHeader from './common/header/index.js';
 import MyFooter from './common/footer/index.js';
 import Home from './components/home/home.js';
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import ErrorPage from './components/errorPage';
 import SignModal from './components/signModal';
 import './index.css';
 import { memoCookie, getCart, getUser } from './actions';
 import { useDispatch } from 'react-redux';
 import CartModal from './components/cart/index.js';
-import { CodepenOutlined } from '@ant-design/icons';
+import { CodepenOutlined, ConsoleSqlOutlined } from '@ant-design/icons';
 
 function App() {
   let tmpUser = localStorage.getItem('user');
@@ -23,6 +24,7 @@ function App() {
   const [isCartOn, setCartOn] = useState(false);
   const [isSearch, setIsSearch] = useState(false);
   const dispatch = useDispatch();
+  const memo = useSelector((state) => state.someMemo);
 
   // useEffect(() => {
   //   var memo = sessionStorage.getItem('current');
@@ -50,13 +52,6 @@ function App() {
   // token jwt, 后端来解密
   // localstorage 未登录的购物车加入localstorage
 
-  // const onRefresh = React.useCallback(() => {
-  //   setRefreshing(true);
-  //   setTimeout(() => {
-  //     setRefreshing(false);
-  //   }, 2000);
-  // }, []);
-
   const getCurrentUser = async () => {
     try {
       const response = await getUser(dispatch)();
@@ -65,20 +60,22 @@ function App() {
         setIsSignedIn(true);
         setUser(response.email);
         memoCookie(dispatch)({ user: response.email, isSignedIn: true });
+        getCart(dispatch)(response.email);
+        if (response.email === 'admin@gmail.com') {
+          setAdmin(true);
+        } else {
+          setAdmin(false);
+        }
       } else {
         setIsSignedIn(false);
-      }
-      if (response.email === 'admin@gmail.com') {
-        setAdmin(true);
-      } else {
-        setAdmin(false);
+        getCart(dispatch)();
       }
     } catch (error) {}
   };
 
   useEffect(() => {
     getCurrentUser();
-    getCart(dispatch)(user);
+    // getCart(dispatch)(user);
   }, []);
 
   // useEffect(() => {

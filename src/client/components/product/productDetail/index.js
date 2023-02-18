@@ -1,21 +1,26 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { useState } from 'react';
-import { Image, Button, InputNumber, Input } from 'antd';
+import { Image, Button, InputNumber, Input, Space } from 'antd';
 import { showProduct, editProduct2DB } from '../../../actions';
-import { editProduct } from '../../../actions';
+import { editProduct, addCart, delCartItem, editCart } from '../../../actions';
 import './index.css';
-import { product } from '../../../constants';
 
 const ProductDetail = ({
   setIsShowProducts,
   setIsEditProduct,
   setIsShowDetail,
   isAdmin,
-  isSignedIn,
+  user,
 }) => {
   const dispatch = useDispatch();
-  const productData = useSelector((state) => state.productEdit);
-  const [current, setCurrent] = useState(0);
+  const productData = useSelector((state) => state.productEdit); // the current product (single)
+  const cartData = useSelector((state) => state.getCartInfo); // current shopping cart (all)
+  const findProductNum = () => {
+    let pNum = cartData.find((ele) => ele.id === productData.id);
+    return pNum ? pNum.num : 0;
+  };
+  const [amount, setAmount] = useState(findProductNum);
+
   const handleCancel = () => {
     // showProduct(dispatch)();
     setIsShowDetail(false);
@@ -28,19 +33,48 @@ const ProductDetail = ({
     setIsEditProduct(true);
   };
 
+  // const handleAdd = () => {
+  //   // productData.choose += 1;
+  //   setCurrent(current + 1);
+  //   // editProduct2DB(dispatch)(productData);
+  //   //setProductChoose(productChoose + 1);
+  // };
+
   const handleAdd = () => {
-    // productData.choose += 1;
-    setCurrent(current + 1);
-    editProduct2DB(dispatch)(productData);
-    //setProductChoose(productChoose + 1);
+    //showProductFromDB(dispatch)();
+    setAmount(1);
+    addCart(dispatch)({
+      email: user,
+      id: productData.id,
+      num: 1,
+    });
+    // editProduct2DB(dispatch)(product);
+    // showProductFromDB(dispatch)();
   };
 
-  const onChange = (event) => {
-    //productData.choose = value;
-    setCurrent(event.target.value);
-    // productData.choose = event.target.value;
-    editProduct2DB(dispatch)(productData);
+  const handleMinusPlus = (op) => {
+    let value = op === '-' ? amount - 1 : amount + 1;
+    setAmount(value);
+    if (value === 0) {
+      delCartItem(dispatch)({
+        email: user,
+        id: productData.id,
+      });
+    } else {
+      editCart(dispatch)({
+        email: user,
+        id: productData.id,
+        num: value,
+      });
+    }
   };
+
+  // const onChange = (event) => {
+  //   //productData.choose = value;
+  //   setCurrent(event.target.value);
+  //   // productData.choose = event.target.value;
+  //   editProduct2DB(dispatch)(productData);
+  // };
 
   return (
     <div>
@@ -50,8 +84,8 @@ const ProductDetail = ({
       <div className='detail-container'>
         <div>
           <Image
-            className='detail-img'
-            width={'90%'}
+            rootClassName='detail-img'
+            // width={400}
             src={productData.imageURL}
           />
         </div>
@@ -61,32 +95,30 @@ const ProductDetail = ({
           <h2>${productData.price}</h2>
           <p>{productData.description}</p>
           <div className='detail-btns'>
-            {/* <Button onClick={handleAddtoCart} type='primary'>
-              {' '}
-              Add to Cart
-            </Button> */}
-
-            <Input
-              style={{
-                width: '20%',
-              }}
-              prefix='Qty.'
-              defaultValue={0}
-              onChange={onChange}
-              id='addInput'
-              value={current}
-            />
-            <Button
-              // style={{
-              //   width: '45%',
-              // }}
-              type='primary'
-              onClick={handleAdd}
-              id='addBtn'
-              disabled={isSignedIn ? false : true}
-            >
-              Add to cart
-            </Button>
+            {amount === 0 ? (
+              <Button type='primary' onClick={handleAdd}>
+                Add to Cart
+              </Button>
+            ) : (
+              <div id='minus-plus-btns'>
+                <Button
+                  type='primary'
+                  style={{ marginRight: 14 }}
+                  onClick={() => handleMinusPlus('-')}
+                >
+                  -
+                </Button>
+                <Space className='quantity-text'>{amount}</Space>
+                <Button
+                  type='primary'
+                  style={{ marginLeft: 14 }}
+                  disabled={amount < productData.quantity ? false : true}
+                  onClick={() => handleMinusPlus('+')}
+                >
+                  +
+                </Button>
+              </div>
+            )}
 
             {isAdmin ? (
               <Button onClick={handleEdit} id='edit-btn'>
@@ -98,7 +130,6 @@ const ProductDetail = ({
             )}
 
             <Button onClick={handleCancel} id='backBtn'>
-              {' '}
               Back
             </Button>
           </div>

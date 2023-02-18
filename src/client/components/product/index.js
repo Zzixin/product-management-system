@@ -19,9 +19,10 @@ const ProductPage = ({ isAdmin, user, isSignedIn, isSearch }) => {
   useEffect(() => {
     showProductFromDB(dispatch)();
     if (memo.user) {
+      // console.log('memo.user: ', memo.user);
       getCart(dispatch)(memo.user);
     }
-  }, [memo]);
+  }, []);
 
   // const currentState = useSelector((state) => state.productOption);
   // useEffect(() => {
@@ -45,7 +46,7 @@ const ProductPage = ({ isAdmin, user, isSignedIn, isSearch }) => {
         setIsEditProduct={setIsEditProduct}
         setIsShowDetail={setIsShowDetail}
         isAdmin={isAdmin}
-        isSignedIn={isSignedIn}
+        user={user}
       />
     );
   } else if (isShowProducts) {

@@ -59,7 +59,7 @@ const HeaderSignOut = ({
       setUser('');
       memoCookie(dispatch)({ user: '', isSignedIn: false });
       signOut(dispatch)();
-      getCart(dispatch)('');
+      getCart(dispatch)();
       //setTimeout(100);
     }
   };

@@ -39,10 +39,12 @@ app.get('/getUser', validateToken, (req, res) => {
   // return user data
   userOn = req.id;
   if (userOn === undefined) {
-    res.json({ id: false });
+    // res.status(302).json({ id: -1 });
+    res.status(302).json({ email: null, id: null });
   } else {
     res.status(200).json({ email: req.email, id: userOn });
   }
+  return;
 });
 
 //Search
@@ -112,7 +114,7 @@ app.post('/signUp', async (req, res) => {
 
     const queryResult = await User.findOne({ email: req.body.email });
     if (queryResult) {
-      res.status(406).json({
+      res.status(409).json({
         error: 'Not Acceptable',
         message: 'You have already signed up. Please sign in.',
       });

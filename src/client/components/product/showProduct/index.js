@@ -53,11 +53,7 @@ const ProductDisplay = ({
   //   setProductData(pData);
   // }, [pData]);
 
-  const [numOfProduct, setNum] = useState(productData.length);
   const [gridShowPage, setGridShowPage] = useState(1);
-  useEffect(() => {
-    setNum(productData.length);
-  }, [productData]);
 
   // useEffect(() => {
   //   if (memo.user) {
@@ -67,7 +63,6 @@ const ProductDisplay = ({
 
   useEffect(() => {
     showProductFromDB(dispatch)();
-    // console.log('test2');
   }, [productEdit]);
 
   const handleChange = (value) => {
@@ -163,7 +158,7 @@ const ProductDisplay = ({
       <Pagination
         className='pagination'
         defaultCurrent={1}
-        total={numOfProduct}
+        total={productData.length}
         onChange={onChange}
         size='small'
       />

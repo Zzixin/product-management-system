@@ -34,7 +34,6 @@ export const getUser = (dispatch) => async () => {
     // if (response.ok) {
     //   return result;
     // }
-    //dispatch({});
     return result;
   } catch (error) {
     console.log('get user: ', error);
