@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import './index.css';
 import { useEffect, useState } from 'react';
 
-const CartContent = ({ isSignedIn }) => {
+const CartContent = ({ isSignedIn, user }) => {
   const [subtotal, setSubtotal] = useState(0);
   const [tax, setTax] = useState(0);
   const [discount, setDiscount] = useState(0);
@@ -14,7 +14,40 @@ const CartContent = ({ isSignedIn }) => {
   const [couponValidate, setCouponValidate] = useState(<></>);
   const productData = useSelector((state) => state.productManage);
   const cartData = useSelector((state) => state.getCartInfo);
+  const memo = useSelector((state) => state.someMemo);
   // const tmpCart = sessionStorage.getItem('cart');
+
+  useEffect(() => {
+    let cp = localStorage.getItem('cp');
+    let tmpPer = 1;
+    if (cp === null) {
+      return;
+    }
+    switch (cp) {
+      case '20 DOLLAR OFF':
+        tmpPer = 20;
+      case '10 OFF':
+        tmpPer = 0.1;
+      default:
+        tmpPer = 1;
+    }
+
+    setCouponValidate(
+      <Alert
+        // key={-1}
+        message={`Coupon ${cp} applied!`}
+        type='success'
+        closable
+        showIcon
+        onClose={clearCoupon}
+      />
+    );
+
+    let tmpDiscount = tmpPer < 1 ? subtotal * tmpPer : tmpPer;
+    setDiscount(tmpDiscount);
+    setTax((subtotal - tmpDiscount) * 0.01);
+    setEstimatedTotal((subtotal - tmpDiscount) * 1.01);
+  }, []);
 
   useEffect(() => {
     const total = cartData.reduce((acc, item) => {
@@ -31,15 +64,19 @@ const CartContent = ({ isSignedIn }) => {
     setTax(total * 0.01);
 
     setEstimatedTotal(total + total * 0.01);
-  }, [cartData]);
+  }, [cartData, user]);
 
   const clearCoupon = () => {
-    console.log('clear');
     setCoupon('');
     setDiscount(0);
     setTax(subtotal * 0.01);
     setEstimatedTotal(subtotal * 1.01);
   };
+
+  useEffect(() => {
+    setCouponValidate(<></>);
+    clearCoupon();
+  }, [user]);
 
   const handleCoupon = () => {
     setCntID(cntID + 1);
@@ -59,8 +96,10 @@ const CartContent = ({ isSignedIn }) => {
     let tmpPercentage = 0;
     if (coupon === '20 DOLLAR OFF') {
       tmpPercentage = 20;
+      localStorage.setItem('cp', '20 DOLLAR OFF');
     } else if (coupon === '10 OFF') {
       tmpPercentage = 0.1;
+      localStorage.setItem('cp', '10 OFF');
     } else {
       setCouponValidate(
         <Alert

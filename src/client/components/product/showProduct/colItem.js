@@ -21,10 +21,10 @@ const ColItem = ({
   productNum,
   user,
 }) => {
-  const { name, price, quantity, imageURL, id } = product;
+  const productEdit = useSelector((state) => state.productEdit);
+  let { name, price, quantity, imageURL, id } = product;
   const [amount, setAmount] = useState(productNum); // amount of products
   // const [tmpCart, setTmpCart] = useState(sessionStorage.getItem('cart'));
-
   const dispatch = useDispatch();
   const memo = useSelector((state) => state.someMemo);
   const cartData = useSelector((state) => state.getCartInfo);

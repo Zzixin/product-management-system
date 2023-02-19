@@ -176,7 +176,7 @@ export const editProduct2DB = (dispatch) => async (data) => {
     const result = await response.json();
     dispatch({
       type: product.editProduct2DB,
-      payload: result.status,
+      payload: data,
     });
     return result.status;
   } catch (error) {

@@ -28,7 +28,7 @@ const CartList = ({ isCartOn, setCartOn, children }) => {
         }}
         hea
         footer={null}
-        width={'35%'}
+        // width={'35%'}
       >
         {children}
       </Modal>

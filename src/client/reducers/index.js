@@ -95,7 +95,7 @@ export const productReducer = (
         return product.showProducts;
       }
     case product.editProduct2DB:
-      if (payload === 200) {
+      if (payload) {
         return product.showProducts;
         // return;
       }
@@ -118,6 +118,8 @@ export const productEdit = (state = {}, { type, payload }) => {
     case product.editProduct:
       return payload;
     case product.detailProduct:
+      return payload;
+    case product.editProduct2DB:
       return payload;
     default:
       return state;

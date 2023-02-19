@@ -40,7 +40,7 @@ app.get('/getUser', validateToken, (req, res) => {
   userOn = req.id;
   if (userOn === undefined) {
     // res.status(302).json({ id: -1 });
-    res.status(302).json({ email: null, id: null });
+    res.status(201).json({ email: null, id: null });
   } else {
     res.status(200).json({ email: req.email, id: userOn });
   }
@@ -326,6 +326,9 @@ app.put('/addToCart', async (req, res) => {
   if (userOn === undefined) {
     let cartInfo = req.cookies['guest-cart'];
     if (req.body) {
+      if (cartInfo === null) {
+        cartInfo = [];
+      }
       cartInfo.push({ id: req.body.id, num: req.body.num });
     }
     res.cookie('guest-cart', cartInfo, {

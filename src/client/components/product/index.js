@@ -17,7 +17,7 @@ const ProductPage = ({ isAdmin, user, isSignedIn, isSearch }) => {
 
   const dispatch = useDispatch();
   useEffect(() => {
-    showProductFromDB(dispatch)();
+    // showProductFromDB(dispatch)();
     if (memo.user) {
       // console.log('memo.user: ', memo.user);
       getCart(dispatch)(memo.user);

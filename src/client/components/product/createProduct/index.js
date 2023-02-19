@@ -24,7 +24,7 @@ const ProductCreate = ({
   if (title === 'Create Product') {
     productData = {
       category: productCategory.Grocery,
-      price: 0,
+      price: 0.01,
       quantity: 0,
     };
   }
@@ -99,12 +99,12 @@ const ProductCreate = ({
 
   const validateMessages = {
     required: '${label} is required!',
-    types: {
-      price: '${label} is not a valid price!',
-    },
-    number: {
-      range: '${label} must be between ${min} and ${max}',
-    },
+    // types: {
+    //   number: '${label} is not a valid number!',
+    // },
+    // number: {
+    //   min: "'${label}' cannot be less than ${min}",
+    // },
   };
 
   return (
@@ -122,11 +122,7 @@ const ProductCreate = ({
         <Form.Item
           name='productName'
           label='Product name'
-          rules={[
-            {
-              required: true,
-            },
-          ]}
+          rules={title === 'Create Product' ? [{ required: true }] : []}
         >
           <Input
             defaultValue={productName}
@@ -137,11 +133,7 @@ const ProductCreate = ({
         <Form.Item
           name='productDescription'
           label='Product Description'
-          rules={[
-            {
-              required: true,
-            },
-          ]}
+          rules={title === 'Create Product' ? [{ required: true }] : []}
         >
           <Input.TextArea
             style={{ height: 100 }}
@@ -157,11 +149,6 @@ const ProductCreate = ({
               display: 'inline-block',
               // width: 'calc(50% + 10px)',
             }}
-            rules={[
-              {
-                required: true,
-              },
-            ]}
           >
             <Select
               defaultValue={productCategory1}
@@ -187,12 +174,13 @@ const ProductCreate = ({
 
           <Form.Item
             label='Price'
+            name='productPrice'
+            validateTrigger='onBlur'
             rules={[
               {
                 type: 'number',
-              },
-              {
-                required: true,
+                min: 0.01,
+                message: 'Quantity cannot be less than 0.01',
               },
             ]}
             style={{
@@ -201,7 +189,7 @@ const ProductCreate = ({
           >
             <InputNumber
               style={{ width: 290 }}
-              min={0}
+              // min={0.01}
               defaultValue={productPrice}
               onChange={onChangePrice}
             />
@@ -209,22 +197,20 @@ const ProductCreate = ({
         </Form.Item>
 
         <Form.Item
-          rules={[
-            {
-              required: true,
-            },
-          ]}
+          style={{
+            marginTop: -25,
+            marginBottom: -15,
+          }}
         >
           <Form.Item
             label='In Stock Quantity'
+            name='ProductQty'
             validateTrigger='onBlur'
             rules={[
               {
                 type: 'number',
-                message: 'input number',
-              },
-              {
-                required: true,
+                min: 0,
+                message: 'Quantity cannot be less than 0',
               },
             ]}
             style={{
@@ -232,6 +218,7 @@ const ProductCreate = ({
             }}
           >
             <InputNumber
+              // min={0}
               style={{ width: 200, marginRight: 20 }}
               defaultValue={productQuantity}
               onChange={onChangeQuantity}
@@ -239,25 +226,26 @@ const ProductCreate = ({
           </Form.Item>
 
           <Form.Item
-            label='Add Image Link'
+            label='Image Link'
             style={{
               display: 'inline-block',
             }}
-            rules={[
-              {
-                required: true,
-              },
-            ]}
           >
             <Input.Group compact>
-              <Input
-                addonBefore='https://'
-                style={{ width: 300 }}
-                defaultValue={productImageURL}
-                onChange={(event) =>
-                  setProductImageURL('https://' + event.target.value)
-                }
-              />
+              <Form.Item
+                validateTrigger='onBlur'
+                name='ImageLink'
+                rules={title === 'Create Product' ? [{ required: true }] : []}
+              >
+                <Input
+                  addonBefore='https://'
+                  style={{ width: 300 }}
+                  defaultValue={productImageURL}
+                  onChange={(event) =>
+                    setProductImageURL('https://' + event.target.value)
+                  }
+                />
+              </Form.Item>
               <Button type='primary' onClick={handleUpload}>
                 <UploadOutlined />
               </Button>

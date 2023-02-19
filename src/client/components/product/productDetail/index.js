@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Image, Button, InputNumber, Input, Space } from 'antd';
-import { showProduct, editProduct2DB } from '../../../actions';
+import { showProductFromDB } from '../../../actions';
 import { editProduct, addCart, delCartItem, editCart } from '../../../actions';
 import './index.css';
 
@@ -20,6 +20,19 @@ const ProductDetail = ({
     return pNum ? pNum.num : 0;
   };
   const [amount, setAmount] = useState(findProductNum);
+  const [pCategory, setPCategory] = useState(productData.category);
+  const [pName, setPName] = useState(productData.name);
+  const [pPrice, setPPrice] = useState(productData.price);
+  const [pDescription, setPDescription] = useState(productData.description);
+  const [pQuantity, setPQuantity] = useState(productData.quantity);
+
+  useEffect(() => {
+    setPCategory(productData.category);
+    setPName(productData.name);
+    setPPrice(productData.price);
+    setPDescription(productData.description);
+    setPQuantity(productData.quantity);
+  }, [productData]);
 
   const handleCancel = () => {
     // showProduct(dispatch)();
@@ -90,10 +103,10 @@ const ProductDetail = ({
           />
         </div>
         <div className='detail-content'>
-          <p>{productData.category}</p>
-          <h2>{productData.name}</h2>
-          <h2>${productData.price}</h2>
-          <p>{productData.description}</p>
+          <p>{pCategory}</p>
+          <h2>{pName}</h2>
+          <h2>${pPrice.toFixed(2)}</h2>
+          <p>{pDescription}</p>
           <div className='detail-btns'>
             {amount === 0 ? (
               <Button type='primary' onClick={handleAdd}>
@@ -112,7 +125,7 @@ const ProductDetail = ({
                 <Button
                   type='primary'
                   style={{ marginLeft: 14 }}
-                  disabled={amount < productData.quantity ? false : true}
+                  disabled={amount < pQuantity ? false : true}
                   onClick={() => handleMinusPlus('+')}
                 >
                   +
@@ -122,7 +135,6 @@ const ProductDetail = ({
 
             {isAdmin ? (
               <Button onClick={handleEdit} id='edit-btn'>
-                {' '}
                 Edit Product
               </Button>
             ) : (

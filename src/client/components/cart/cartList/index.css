@@ -6,4 +6,12 @@
 
 .cart-modal {
   margin-right: 5px;
+  max-width: 35%;
+}
+
+@media (max-width: 768px) {
+  .cart-modal {
+    max-width: 95%;
+    margin: auto;
+  }
 }

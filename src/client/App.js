@@ -14,7 +14,20 @@ import CartModal from './components/cart/index.js';
 import { CodepenOutlined, ConsoleSqlOutlined } from '@ant-design/icons';
 
 function App() {
-  let tmpUser = localStorage.getItem('user');
+  // let tmpUser = localStorage.getItem('user');
+  let tmpUser = 'none';
+  const getCurrentName = async () => {
+    try {
+      const response = await getUser(dispatch)();
+      if (response.id) {
+        tmpUser = response.email.split('@')[0];
+      } else {
+        tmpUser = null;
+      }
+    } catch (error) {}
+  };
+  getCurrentName();
+
   const [isSignedIn, setIsSignedIn] = useState(tmpUser !== null); // if user is signed in
   const [isModalPop, setIsModalPop] = useState(false);
   const [user, setUser] = useState(tmpUser === null ? '' : tmpUser);
@@ -56,7 +69,7 @@ function App() {
     try {
       const response = await getUser(dispatch)();
       if (response.id) {
-        localStorage.setItem('user', response.email.split('@')[0]);
+        // localStorage.setItem('user', response.email.split('@')[0]);
         setIsSignedIn(true);
         setUser(response.email);
         memoCookie(dispatch)({ user: response.email, isSignedIn: true });
@@ -99,6 +112,7 @@ function App() {
         isSignedIn={isSignedIn}
         isCartOn={isCartOn}
         setCartOn={setCartOn}
+        user={user}
       />
       <SignModal
         isSignedIn={isSignedIn}

@@ -1,7 +1,7 @@
 import { Image, InputNumber, Button, Typography } from 'antd';
 import { delCartItem, editCart } from '../../../actions';
 import { useDispatch, useSelector } from 'react-redux';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DeleteOutlined } from '@ant-design/icons';
 const { Text, Link } = Typography;
 
@@ -18,6 +18,10 @@ const CartCell = ({
   const memo = useSelector((state) => state.someMemo);
   const [amount, setAmount] = useState(pNum);
   // const [tmpCart, setTmpCart] = useState(sessionStorage.getItem('cart'));
+
+  useEffect(() => {
+    setAmount(pNum);
+  }, [pNum]);
 
   const handleChange = (value) => {
     setAmount(value);
